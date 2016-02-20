@@ -17,8 +17,15 @@ var localPlayerID = 0;
 var game; // game is a Game object
 
 // param: server - true/false - true means it's the server
-var Game = function(server) {
+var Game = function(server, lobby, serverSendGameData) {
   this.server = server;
+
+  // used by server so game can call to update clients
+  if(lobby) {
+    this.lobby = lobby;
+
+    this.serverSendGameData = serverSendGameData;
+  }
 
   // array of Player objects (player.js)
   this.players = [];
@@ -89,35 +96,45 @@ Game.prototype.gameLoop = function() {
   }
 
   if(!this.server) {
+    // clientside render the game
     render(deltaTime);
+  }
+  else {
+    // serverside send the clients the files
+    this.serverSendGameData(this.lobby);
   }
 
   this.lastTime = currentTime;
 }
 
-// called when the client recieves a packet from the server
-Game.prototype.clientRecieveMessage = function(data) {
-
-}
-
 // called when the packet from the server is a game packet to parse
+// populate local fields with data from the server
 Game.prototype.clientParseGameData = function(data) {
+  data = JSON.parse(data);
 
+  var timeSinceMessageSent = new Date().getTime() - data.timestamp;
+
+  this.players = data.players;
+  this.bullets = data.bullets;
+
+  // console.log('We got data baby! ' + data);
 }
 
 Game.prototype.checkCollisions = function(delta) {
   // player - bullet collisions
-  for(var k = this.bullets.length; k >= 0; k--) {
+  for(var k = this.bullets.length-1; k >= 0; k--) {
     for(var i = 0; i < this.players.length; i++) {
-      if(Math.abs(this.bullets[k].x - this.players[i].x) < this.players[i].radius + this.bullets[k].radius &&// x proximity
+      if(this.bullets[k].owner != i && // make sure you aren't shooting yourself
+          Math.abs(this.bullets[k].x - this.players[i].x) < this.players[i].radius + this.bullets[k].radius &&// x proximity
           Math.abs(this.bullets[k].y - this.players[i].y) < this.players[i].radius + this.bullets[k].radius) {
         // hurt the playa
-        this.players[i].health -= bullet[k].damage;
+        this.players[i].health -= bullets[k].damage;
 
         // kill the bullet
         this.bullets.splice(k, 1);
         if(server) {
-          // send something special to clients ? 
+          // send something special to clients ?
+
         }
       }
     }

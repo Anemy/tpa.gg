@@ -12,7 +12,7 @@ var gridGlowUp = true; // says whether to increase or decrease grid glow
 const gridGlowDiff = 50;
 
 var render = function(delta) {
-  ctx.clearRect(0, 0, width, height);
+  ctx.clearRect(0, 0, width, height); 
 
   var sideScrollX = 0;
   var sideScrollY = 0;
@@ -64,7 +64,7 @@ var render = function(delta) {
     render_bullet(game.bullets[i]);
   }
 
-  if(game.countdownTimer) {
+  if(game.countdownTimer > 0) {
     drawCountDownTimer();
   }
 

@@ -29,7 +29,7 @@ const minPlayers = 2;
 
 // bullet
 const bulletSpeed = 700;
-const constBulletDamage = 10;
+const bulletDamage = 10;
 
 const fps = 1000 / 60; // 60 is the real fps
 

@@ -31,7 +31,7 @@ var Lobby = function(lobbyID) {
   // boolean says if game is going or not - don't let people join when it's going
   this.inProgress = false;
 
-  this.game = new Game(true);
+  this.game = new Game(true, this, serverSendGameData);
 
   this.handleInput = function() {
     console.log("Handle input. TODO");
@@ -44,17 +44,36 @@ var launchGame = function(lobby) {
   lobby.inProgress = true;
 
   for(var i = 0; i < lobby.clients.length; i++) { 
-    lobby.clients[i].emit('game start', {});
+    lobby.clients[i].emit('game start', i);
   }
 
   lobby.game.startGameLoop();
   // add players here?
 
   // move this into somewhere else at some point
-  lobby.game.players.push(new Player(playerRadius, playerRadius));
-  lobby.game.players.push(new Player(gameWidth - playerRadius, playerRadius));
-  lobby.game.players.push(new Player(playerRadius, gameHeight - playerRadius));
-  lobby.game.players.push(new Player(gameWidth - playerRadius, gameHeight - playerRadius));
+  lobby.game.players.push(new Player(playerRadius, playerRadius)); // top left
+  // lobby.game.players.push(new Player(gameWidth - playerRadius, playerRadius)); // top right
+  // lobby.game.players.push(new Player(playerRadius, gameHeight - playerRadius)); // bottom left
+  lobby.game.players.push(new Player(gameWidth - playerRadius, gameHeight - playerRadius)); // bottom right
+}
+
+// sends all of the game data of the indicated lobby from the server
+var serverSendGameData = function(lobby) {
+  // gameLoop
+  // lobby.game
+  var dataToSend = {
+    timestamp: new Date().getTime()
+  };
+
+  dataToSend.countdownTimer = lobby.game.countdownTimer;
+  dataToSend.players = lobby.game.players;
+  dataToSend.bullets = lobby.game.bullets;
+
+  var dataString = JSON.stringify(dataToSend);
+  // shoot the data to the clients
+  for(var i = 0; i < lobby.clients.length; i++) {
+    lobby.clients[i].emit('gameData', dataString);
+  }
 }
 
 var createNewLobby = function (client) {
@@ -109,7 +128,6 @@ var joinLobby = function(client) {
           launchGame(lobby);
         }
         return;
-        
       }
     }
 
@@ -152,7 +170,9 @@ var server_start = function(server, port) {
       } 
       else if (messageType == 'm') {
         var messageQuery = messageParts[1] || null;
-        if(messageQuery == 'joinGame') {
+
+        // try to join a game if player is applicable
+        if(messageQuery == 'joinGame' && !client.inLobby) {
           console.log('Client wants to join a game');
           joinLobby(client);
         }
@@ -176,5 +196,4 @@ var server_start = function(server, port) {
 module.exports = {
   gameLobbies: lobbies,
   startListening: server_start,
-  another: 'yo'
 }

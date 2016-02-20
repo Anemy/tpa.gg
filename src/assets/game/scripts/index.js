@@ -45,10 +45,17 @@ $(document).ready(function() {
   });
 
   socket.on('game start', function(message) {
+    localPlayerID = message;
+
     console.log('Let\'s start this game');
 
     game = new Game(false);
     game.initGame();
+  });
+
+  // bind the game thing
+  socket.on('gameData', function(data) {
+    game.clientParseGameData(data);
   });
 
   // find a game

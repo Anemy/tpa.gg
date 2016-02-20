@@ -17,7 +17,7 @@ var Bullet = function(xPos, yPos, xDir, yDir, angle, ownerID) {
 
   this.radius = 2;
 
-  this.damage = constBulletDamage; // 10 to start (10 shot kill in constants/index.js)
+  this.damage = bulletDamage; // 10 to start (10 shot kill in constants/index.js)
 
   // return false if it should DIE!
   this.update = function(delta) {
