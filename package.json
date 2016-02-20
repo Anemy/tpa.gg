@@ -1,25 +1,25 @@
 {
-  "name": "automatic-octo-doodle",
+  "name": "carabiner",
   "version": "1.0.0",
-  "description": "automatic-octo-doodle",
+  "description": "carabiner",
   "main": "index.js",
   "scripts": {
     "clean": "rm -rf dist",
     "build": "npm run clean && gulp",
     "start:dev": "npm run build && cd dist && node server.js",
     "start:prod": "node server.js",
-    "deploy": "npm run build && cd dist && git init && git add . && git commit -m 'Update site.' && git push git@heroku.com:secret-bastion-53821.git master --force"
+    "deploy": "npm run build && cd dist && git init && git add . && git commit -m 'Update site.' && git push git@heroku.com:carabiner-app.git master --force"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kirbyk/automatic-octo-doodle.git"
+    "url": "git+https://github.com/kirbyk/carabiner.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kirbyk/automatic-octo-doodle/issues"
+    "url": "https://github.com/kirbyk/carabiner/issues"
   },
-  "homepage": "https://github.com/kirbyk/automatic-octo-doodle#readme",
+  "homepage": "https://github.com/kirbyk/carabiner#readme",
   "dependencies": {
     "body-parser": "^1.15.0",
     "dotenv": "^2.0.0",
