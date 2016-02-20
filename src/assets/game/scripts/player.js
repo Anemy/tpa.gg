@@ -24,6 +24,8 @@ var Player = function (x, y) {
 
   // handles the updating of the player
   this.update = function(delta) {
-
+    console.log('Update me with delta: ' + delta);
   }
+
+  // drawing the player is handled in draw.js
 }
