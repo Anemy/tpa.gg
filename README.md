@@ -1,7 +1,7 @@
 carabiner
 =========
 
-Data -> Webapp
+Just hook it up.
 
 Installation
 ------------
