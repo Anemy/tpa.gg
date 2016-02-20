@@ -4,6 +4,8 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var normalize = require('node-normalize-scss');
 var concat = require('gulp-concat');
+var shell = require('gulp-shell');
+var server = require( 'gulp-develop-server' );
 
 
 var config = {
@@ -75,5 +77,21 @@ gulp.task('sass:watch', function() {
   gulp.watch('./src/styles/*.scss', ['sass']);
 });
 
-gulp.task('default', ['copy', 'assets', 'views', 'models', 'controllers',
-                      'scripts', 'sass']);
+gulp.task('js', ['copy', 'assets', 'views', 'models',
+                 'controllers', 'scripts']);
+
+gulp.task('js:watch', function() {
+  gulp.watch(['src/*.js', 'src/**/*.js'], ['js']);
+});
+
+gulp.task( 'server:start', function() {
+    server.listen( { path: './dist/server.js' } );
+});
+
+gulp.task( 'server:restart', function() {
+    gulp.watch( [ './dist/server.js' ], server.restart );
+});
+
+gulp.task('watchall', ['js:watch', 'sass:watch', 'server:restart']);
+
+gulp.task('default', [ 'js', 'sass', 'server:start', 'watchall']);
