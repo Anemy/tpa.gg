@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "npm run clean && gulp",
-    "start:dev": "npm run build && cd dist && node server.js",
+    "start:dev": "npm run clean && gulp",
     "start:prod": "node server.js",
     "deploy": "npm run build && cd dist && git init && git add . && git commit -m 'Update site.' && git push git@heroku.com:carabiner-app.git master --force"
   },
