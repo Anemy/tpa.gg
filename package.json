@@ -1,0 +1,33 @@
+{
+  "name": "automatic-octo-doodle",
+  "version": "1.0.0",
+  "description": "automatic-octo-doodle",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kirbyk/automatic-octo-doodle.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kirbyk/automatic-octo-doodle/issues"
+  },
+  "homepage": "https://github.com/kirbyk/automatic-octo-doodle#readme",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "dotenv": "^2.0.0",
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0",
+    "mongoose": "^4.4.4"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-bower": "0.0.13",
+    "gulp-concat": "^2.6.0",
+    "gulp-sass": "^2.2.0",
+    "node-normalize-scss": "^1.1.1"
+  }
+}

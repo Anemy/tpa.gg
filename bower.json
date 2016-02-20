@@ -1,0 +1,21 @@
+{
+  "name": "automatic-octo-doodle",
+  "description": "automatic-octo-doodle",
+  "main": "index.js",
+  "authors": [
+    "Kirby Kohlmorgen <kirby@kkohlmorgen.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/kirbyk/automatic-octo-doodle",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass": "bootstrap-sass-official#~3.3.6"
+  }
+}
