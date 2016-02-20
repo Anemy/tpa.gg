@@ -36,3 +36,11 @@ const keyCodes = {
   s: 83,
   d: 68
 };
+
+// just returns a negative half the time
+var returnNeg = function(num) {
+  if(Math.random()*100 < 50) {
+    return -num;
+  }
+  return num;
+}

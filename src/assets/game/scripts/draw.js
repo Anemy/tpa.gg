@@ -48,6 +48,10 @@ var render = function(delta) {
 
   render_map(delta);
 
+  for(var i = 0; i < game.particles.length; i++) {
+    render_particle(game.particles[i]);
+  }
+
   for(var i = 0; i < game.players.length; i++) {
     render_player(game.players[i]);
   }
@@ -126,6 +130,16 @@ var render_player = function(player) {
   // ctx.rotate(Math.atan2(player.mouseY, player.mouseX), player.x, player.y);// * (Math.PI/180)
   // ctx.fillRect(player.x, player.y, 10, 2);
   // ctx.rotate(-(Math.atan2(player.mouseY, player.mouseX)), player.x, player.y);// * (Math.PI/180)
+}
+
+var render_particle = function(particle) {
+  // ctx.beginPath();
+  // ctx.arc(bullet.x, bullet.y, bullet.radius, 0, 2 * Math.PI, false);
+  // ctx.fillStyle = '#220000';
+  // ctx.fill();
+  // ctx.closePath();
+  ctx.strokeStyle = particle.color + ", " + particle.life/100 + ")";
+  ctx.strokeRect(particle.x, particle.y, particle.radius, particle.radius);
 }
 
 var render_bullet = function(bullet) {

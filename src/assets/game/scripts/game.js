@@ -28,6 +28,8 @@ var Game = function(server) {
 
   this.bullets = [];
 
+  this.particles = [];
+
   this.lastTime = Date.now();
 
   if(server) {
@@ -92,13 +94,19 @@ Game.prototype.update = function(delta) {
   // bullet updating
   for(var i = this.bullets.length - 1; i >= 0; i--) {
     // console.log('Try to update bullet: ' + i);
-    if(!this.bullets[i].update(delta)) {
+    if(!this.bullets[i].update(delta)) { // dead bullet?
+      // spawn particles
+      for(var k = 0; k < 20; k++) { // 20 particles to make
+        var colorToBe = 'rgba(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255); // THE END ) NOT ADDED BECause ALPHA ADDED
+        this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, returnNeg(Math.random()*200), returnNeg(Math.random()*200), colorToBe));
+      }
+
       // kill dead bullet
-      // add particles here
       this.bullets.splice(i,1);
     }
   }
 
+  // player updating
   for(var i = 0; i < this.players.length; i++) {
     // player update
     this.players[i].update(delta);
@@ -108,7 +116,15 @@ Game.prototype.update = function(delta) {
       this.players[i].shootCounter = shootRate;
 
       var shootAngle = Math.atan2(this.players[i].mouseY, this.players[i].mouseX);
-      this.bullets.push(new Bullet(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), bulletSpeed*Math.cos(shootAngle), bulletSpeed*Math.sin(shootAngle), i));
+      this.bullets.push(new Bullet(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), bulletSpeed*Math.cos(shootAngle), bulletSpeed*Math.sin(shootAngle), shootAngle, i));
+    }
+  }
+
+  //particle updating
+  for(var i = this.particles.length - 1; i >= 0; i--) {
+    if(!this.particles[i].update(delta)) {
+      // kill dead particle
+      this.particles.splice(i,1);
     }
   }
 
