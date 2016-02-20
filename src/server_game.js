@@ -24,20 +24,32 @@ var port = childStartAgruments[0];
 
 console.log('Child: Process started, going to use port: ' + port);
 
-var io = null;
-
 // Receive message from parent server (JSON format?)
 process.on('message', function(m) {
-    var messageParts = m.split('.');
-    switch (messageParts[0]){
-        case 'hello':
-            // do something?
-            break;
-    }
+  var messageParts = m.split('.');
+  switch (messageParts[0]){
+    case 'hello':
+      // do something?
+      break;
+  }
 });
+
+// contains all of the client connections and things pertaining to the lobby
+var lobby = function() {
+  this.pop = 0; // players in game
+  this.clients = [];
+}
 
 // game = new Game();
 // game.startGameLoop();
+
+// socket io creation and listening
+var io = require('socket.io').listen(port);
+io.sockets.on('connection', function(client) {
+  client.on('disconnect', function() {
+    // tell the game to remove a player?
+  });
+});
 
 
 //the game process kills itself

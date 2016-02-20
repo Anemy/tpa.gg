@@ -79,9 +79,21 @@ Game.prototype.gameLoop = function() {
 
   this.checkCollisions(deltaTime);
 
-  render(deltaTime);
+  if(!this.server) {
+    render(deltaTime);
+  }
 
   this.lastTime = currentTime;
+}
+
+// called when the client recieves a packet from the server
+Game.prototype.clientRecieveMessage = function(data) {
+
+}
+
+// called when the packet from the server is a game packet to parse
+Game.prototype.clientParseGameData = function(data) {
+
 }
 
 Game.prototype.checkCollisions = function(delta) {

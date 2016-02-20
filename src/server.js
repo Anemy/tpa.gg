@@ -48,6 +48,7 @@ app.get('*', function(req, res) {
 var server = app.listen(app.get('port'), function () {
   console.log('the server is listening on port %s', app.get('port'));
 
+  // send the first child the port to goooo
   var args = [portStart];
 
   // starting a process for users to play games on 
