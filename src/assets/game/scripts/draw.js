@@ -106,30 +106,32 @@ var render_map = function(delta) {
 // draws the player passed
 var render_player = function(player) {
 
-  // drawing base circle player
+  // drawing circle player
   ctx.beginPath();
   ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI, false);
-  ctx.fillStyle = '#DBDDDE';
+  ctx.fillStyle = '#8E8E93';
   ctx.fill();
   ctx.lineWidth = 1;
-  ctx.strokeStyle = '#898C90';
+  ctx.strokeStyle = '#4A4A4A';
   ctx.stroke();
   ctx.closePath();
 
   ctx.fillStyle = '#111111';
 
+  // drawing gun VV
   ctx.save();
+
   ctx.translate( player.x, player.y );
   ctx.rotate(Math.atan2(player.mouseY, player.mouseX));
-  ctx.fillRect(player.radius, 0, player.gunSize, 2);
-  ctx.translate( -player.x, -player.y );
-  // ctx.drawImage( myImageOrCanvas, 0, 0 );
-  ctx.restore();
 
-  // drawing turret on gun
-  // ctx.rotate(Math.atan2(player.mouseY, player.mouseX), player.x, player.y);// * (Math.PI/180)
-  // ctx.fillRect(player.x, player.y, 10, 2);
-  // ctx.rotate(-(Math.atan2(player.mouseY, player.mouseX)), player.x, player.y);// * (Math.PI/180)
+  ctx.fillRect(player.radius, 0, player.gunSize, 4);
+
+  //rotating a little for buffer small part of turret
+  ctx.rotate(-Math.PI/90); 
+  ctx.fillRect(player.radius, 0, Math.floor(player.gunSize/2), 6);
+
+  ctx.translate( -player.x, -player.y );
+  ctx.restore();
 }
 
 var render_particle = function(particle) {
