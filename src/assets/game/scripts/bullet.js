@@ -18,28 +18,27 @@ var Bullet = function(xPos, yPos, xDir, yDir, angle, ownerID) {
   this.radius = 2;
 
   this.damage = bulletDamage; // 10 to start (10 shot kill in constants/index.js)
+}
 
-  // return false if it should DIE!
-  this.update = function(delta) {
-
-    // Check borders of map
-    if(this.xDir < 0 && this.x - this.radius + this.xDir*delta < 0) {
-      return false;
-    }
-    if(this.xDir > 0 && this.x + this.radius + this.xDir*delta > gameWidth) {
-      return false;
-    }
-    if(this.yDir < 0 && this.y - this.radius + this.yDir*delta < 0) {
-      return false;
-    }
-    if(this.yDir > 0 && this.y + this.radius + this.yDir*delta > gameHeight) {
-      return false;
-    }
-
-    // update player position
-    this.y += this.yDir * delta;
-    this.x += this.xDir * delta;
-
-    return true;
+// return false if it should DIE!
+updateBullet = function(bullet, delta) {
+  // Check borders of map
+  if(bullet.xDir < 0 && bullet.x - bullet.radius + bullet.xDir * delta < 0) {
+    return false;
   }
+  if(bullet.xDir > 0 && bullet.x + bullet.radius + bullet.xDir * delta > gameWidth) {
+    return false;
+  }
+  if(bullet.yDir < 0 && bullet.y - bullet.radius + bullet.yDir * delta < 0) {
+    return false;
+  }
+  if(bullet.yDir > 0 && bullet.y + bullet.radius + bullet.yDir * delta > gameHeight) {
+    return false;
+  }
+
+  // update player position
+  bullet.y += bullet.yDir * delta;
+  bullet.x += bullet.xDir * delta;
+
+  return true;
 }

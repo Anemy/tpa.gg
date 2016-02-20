@@ -142,9 +142,10 @@ var server_start = function(server, port) {
   io.sockets.on('connection', function(client) {
     client.lobbyID = null;
     client.inLobby = false;
+    client.token = uuid.v4();
 
     // send the client a unique id (idk what to do with it yet LOL)
-    client.emit('token', uuid.v4());
+    client.emit('token', client.token);
 
     // handle message from client
     client.on('message', function(message) {
@@ -157,10 +158,10 @@ var server_start = function(server, port) {
       var messageParts = message.split('.');
       var messageType = messageParts[0] || null;
 
-      if (messageType == "input") {
+      if (messageType == "i") {
         // handle input
         if(client.inLobby && client.lobbyID) {
-          if(lobbies[client.lobbyID]) {
+          if(lobbies[client.lobbyID] && ) {
             lobbies[client.lobbyID].handleInput(messageParts[1]);
           }
         }

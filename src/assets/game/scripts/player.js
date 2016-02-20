@@ -28,90 +28,94 @@ var Player = function (x, y) {
   this.right = false;
   this.up = false;
   this.down = false;
+}
+// handles the updating of the player
+updatePlayer = function(player, delta) {
+  // console.log('Player speed: ' + this.xDir);
 
-  // handles the updating of the player
-  this.update = function(delta) {
-    // console.log('Player speed: ' + this.xDir);
-
-    // when this hits 0 the player can shoot again
-    if(this.shootCounter > 0) {
-      this.shootCounter -= delta*1000;
-    }
-
-    if(this.left) {
-      this.xDir -= playerAcceleration * delta;
-      if(this.xDir < -maxPlayerSpeed) {
-        this.xDir = -maxPlayerSpeed;
-      }
-    }
-    if(this.right) {
-      this.xDir += playerAcceleration * delta;
-      if(this.xDir > maxPlayerSpeed) {
-        this.xDir = maxPlayerSpeed;
-      }
-    }
-
-    if(this.up) {
-      this.yDir -= playerAcceleration * delta;
-      if(this.yDir < -maxPlayerSpeed) {
-        this.yDir = -maxPlayerSpeed;
-      }
-    }
-    if(this.down) {
-      this.yDir += playerAcceleration * delta;
-      if(this.yDir > maxPlayerSpeed) {
-        this.yDir = maxPlayerSpeed;
-      }
-    }
-
-    // add friction to their movement (TODO: make a quick helper function to half this code) - I could have written it in the time it took to write this TODO - FUCK
-    if(this.xDir > 0) { // x
-      this.xDir -= friction * delta;
-      if(this.xDir < 0) {
-        this.xDir = 0;
-      }
-    }
-    else if(this.xDir < 0) {
-      this.xDir += friction * delta;
-      if(this.xDir > 0) {
-        this.xDir = 0;
-      }
-    }
-    if(this.yDir > 0) { // y
-      this.yDir -= friction * delta;
-      if(this.yDir < 0) {
-        this.yDir = 0;
-      }
-    }
-    else if(this.yDir < 0) {
-      this.yDir += friction * delta;
-      if(this.yDir > 0) {
-        this.yDir = 0;
-      }
-    }
-
-    // Check borders of map
-    if(this.xDir < 0 && this.x - this.radius + this.xDir*delta < 0) {
-      this.xDir = -this.xDir/2; // half velocity bounce for now
-      this.x = this.radius;
-    }
-    if(this.xDir > 0 && this.x + this.radius + this.xDir*delta > gameWidth) {
-      this.xDir = -this.xDir/2;
-      this.x = gameWidth - this.radius;
-    }
-    if(this.yDir < 0 && this.y - this.radius + this.yDir*delta < 0) {
-      this.yDir = -this.yDir/2; // half velocity bounce for now
-      this.y = this.radius;
-    }
-    if(this.yDir > 0 && this.y + this.radius + this.yDir*delta > gameHeight) {
-      this.yDir = -this.yDir/2;
-      this.y = gameHeight - this.radius;
-    }
-
-    // update player position
-    this.y += this.yDir * delta;
-    this.x += this.xDir * delta;
+  // when this hits 0 the player can shoot again
+  if(player.shootCounter > 0) {
+    player.shootCounter -= delta*1000;
   }
 
-  // drawing the player is handled in draw.js
+  if(player.left) {
+    player.xDir -= playerAcceleration * delta;
+    if(player.xDir < -maxPlayerSpeed) {
+      player.xDir = -maxPlayerSpeed;
+    }
+  }
+  if(player.right) {
+    player.xDir += playerAcceleration * delta;
+    if(player.xDir > maxPlayerSpeed) {
+      player.xDir = maxPlayerSpeed;
+    }
+  }
+
+  if(player.up) {
+    player.yDir -= playerAcceleration * delta;
+    if(player.yDir < -maxPlayerSpeed) {
+      player.yDir = -maxPlayerSpeed;
+    }
+  }
+  if(player.down) {
+    player.yDir += playerAcceleration * delta;
+    if(player.yDir > maxPlayerSpeed) {
+      player.yDir = maxPlayerSpeed;
+    }
+  }
+
+  // add friction to their movement (TODO: make a quick helper function to half player code) - I could have written it in the time it took to write player TODO - FUCK
+  if(player.xDir > 0) { // x
+    player.xDir -= friction * delta;
+    if(player.xDir < 0) {
+      player.xDir = 0;
+    }
+  }
+  else if(player.xDir < 0) {
+    player.xDir += friction * delta;
+    if(player.xDir > 0) {
+      player.xDir = 0;
+    }
+  }
+  if(player.yDir > 0) { // y
+    player.yDir -= friction * delta;
+    if(player.yDir < 0) {
+      player.yDir = 0;
+    }
+  }
+  else if(player.yDir < 0) {
+    player.yDir += friction * delta;
+    if(player.yDir > 0) {
+      player.yDir = 0;
+    }
+  }
+
+  // Check borders of map
+  if(player.xDir < 0 && player.x - player.radius + player.xDir*delta < 0) {
+    player.xDir = -player.xDir/2; // half velocity bounce for now
+    player.x = player.radius;
+  }
+  if(player.xDir > 0 && player.x + player.radius + player.xDir*delta > gameWidth) {
+    player.xDir = -player.xDir/2;
+    player.x = gameWidth - player.radius;
+  }
+  if(player.yDir < 0 && player.y - player.radius + player.yDir*delta < 0) {
+    player.yDir = -player.yDir/2; // half velocity bounce for now
+    player.y = player.radius;
+  }
+  if(player.yDir > 0 && player.y + player.radius + player.yDir*delta > gameHeight) {
+    player.yDir = -player.yDir/2;
+    player.y = gameHeight - player.radius;
+  }
+
+  // update player position
+  player.y += player.yDir * delta;
+  player.x += player.xDir * delta;
 }
+
+  // drawing the player is handled in draw.js
+
+// first server update clients
+// player inputs
+// lerp data 
+//

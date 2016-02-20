@@ -112,7 +112,9 @@ Game.prototype.gameLoop = function() {
 Game.prototype.clientParseGameData = function(data) {
   data = JSON.parse(data);
 
-  var timeSinceMessageSent = new Date().getTime() - data.timestamp;
+  var timeSinceMessageSent = new Date().getTime() - data.timestamp; // in ms
+
+  this.countdownTimer = data.countdownTimer - (timeSinceMessageSent/1000); // countdown timer in s
 
   this.players = data.players;
   this.bullets = data.bullets;
@@ -146,7 +148,8 @@ Game.prototype.update = function(delta) {
   // bullet updating
   for(var i = this.bullets.length - 1; i >= 0; i--) {
     // console.log('Try to update bullet: ' + i);
-    if(!this.bullets[i].update(delta)) { // dead bullet?
+    // updatePlayer(this.players[i], delta);
+    if(!updateBullet(this.bullet[i], delta)) { // dead bullet?
       if(!this.server) { // only spawn particles on the client
         // spawn particles
         for(var k = 0; k < 20; k++) { // 20 particles to make
@@ -163,7 +166,8 @@ Game.prototype.update = function(delta) {
   // player updating
   for(var i = 0; i < this.players.length; i++) {
     // player update
-    this.players[i].update(delta);
+    // this.players[i].update(delta);
+    updatePlayer(this.players[i], delta);
 
     // bullet shooting/creation
     if(this.players[i].shoot && this.players[i].shootCounter <= 0) {

@@ -8,6 +8,10 @@ This file controls all of the key inputs
 var handleKeydown = function (e) {
   var keyCode = e.keyCode;
 
+  socket.emit('input' ,
+
+  'm.i.d.' + keyCode);
+
   switch(keyCode) {
     case keyCodes.space:
       game.players[localPlayerID].shoot = true;
@@ -33,6 +37,8 @@ var handleKeydown = function (e) {
 
 var handleKeyup = function (e) {
   var keyCode = e.keyCode;
+
+  socket.emit('m.i.u.' + keyCode);
 
   switch(keyCode) {
     case keyCodes.space:
