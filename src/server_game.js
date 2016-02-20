@@ -39,9 +39,11 @@ var Lobby = function(lobbyID) {
 }
 
 var launchGame = function(lobby) {
-  // console.log("Start a game!");
+  console.log("Start a game!");
 
-  for(var i = 0; i < lobby.clients; i++) { 
+  lobby.inProgress = true;
+
+  for(var i = 0; i < lobby.clients.length; i++) { 
     lobby.clients[i].emit('game start', {});
   }
 
@@ -59,16 +61,21 @@ var createNewLobby = function (client) {
   // create a new lobby
   var lobbyID = uuid.v4()
   lobbies[lobbyID] = new Lobby(lobbyID);
+  console.log('Lobby created: ' + lobbyID);
 
   client.send('m.lobbyFound');
+  client.inLobby = true;
   client.lobbyID = lobbyID;
+
+  lobbies[lobbyID].pop++;
+  lobbies[lobbyID].clients.push(client);
 }
 
 // searches for a game for the client, or makes one depending
 var joinLobby = function(client) {
 
   // need to find how to reference lobbies
-  if(lobbies.length == 0) {
+  if(Object.keys(lobbies).length == 0) {
     // create new lobby
     createNewLobby(client);
   }
@@ -77,7 +84,10 @@ var joinLobby = function(client) {
 
     for (var lobbyID in lobbies) {
       // skip loop if the property is from prototype
-      if (!lobbies.hasOwnProperty(lobbyID)) continue;
+      if (!lobbies.hasOwnProperty(lobbyID)) { 
+        // console.log('In proto: ' + lobbyID);
+        continue;
+      }
 
       var lobby = lobbies[lobbyID];
 
@@ -93,20 +103,13 @@ var joinLobby = function(client) {
         // send the client the lobby ID and the 
         client.send('m.lobbyFound');
 
+        // can the game start?
         if(lobby.pop == minPlayers) {
-          // start the game here!
+          // start the game!
           launchGame(lobby);
         }
-        else if(lobby.pop > maxPlayers) {
-          // It should never be in here
-          // console.log("FUCKKKKKKKK");
-        }
-        else {
-
-          // console.log('Added another player to lobby: ' + lobbyID);
-        }
-
         return;
+        
       }
     }
 
@@ -150,7 +153,7 @@ var server_start = function(server, port) {
       else if (messageType == 'm') {
         var messageQuery = messageParts[1] || null;
         if(messageQuery == 'joinGame') {
-          // console.log('Client wants to join a game');
+          console.log('Client wants to join a game');
           joinLobby(client);
         }
       }

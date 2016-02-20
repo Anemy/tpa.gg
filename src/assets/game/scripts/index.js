@@ -45,6 +45,8 @@ $(document).ready(function() {
   });
 
   socket.on('game start', function(message) {
+    console.log('Let\'s start this game');
+
     game = new Game(false);
     game.initGame();
   });
