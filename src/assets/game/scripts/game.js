@@ -106,7 +106,22 @@ Game.prototype.clientParseGameData = function(data) {
 }
 
 Game.prototype.checkCollisions = function(delta) {
+  // player - bullet collisions
+  for(var k = this.bullets.length; k >= 0; k--) {
+    for(var i = 0; i < this.players.length; i++) {
+      if(Math.abs(this.bullets[k].x - this.players[i].x) < this.players[i].radius + this.bullets[k].radius &&// x proximity
+          Math.abs(this.bullets[k].y - this.players[i].y) < this.players[i].radius + this.bullets[k].radius) {
+        // hurt the playa
+        this.players[i].health -= bullet[k].damage;
 
+        // kill the bullet
+        this.bullets.splice(k, 1);
+        if(server) {
+          // send something special to clients ? 
+        }
+      }
+    }
+  }
 }
 
 // calls all of the updating functions and collision handling
