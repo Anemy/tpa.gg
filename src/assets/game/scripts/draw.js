@@ -122,7 +122,7 @@ var render_player = function(player) {
   ctx.save();
 
   ctx.translate( player.x, player.y );
-  ctx.rotate(Math.atan2(player.mouseY, player.mouseX));
+  ctx.rotate(Math.atan2(player.mouseY, player.mouseX) -Math.PI/90);
 
   ctx.fillRect(player.radius, 0, player.gunSize, 4);
 

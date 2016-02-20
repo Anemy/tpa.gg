@@ -131,11 +131,3 @@ Game.prototype.update = function(delta) {
     }
   }
 }
-
-// clientside running for now
-$(document).ready(function() {
-  game = new Game();
-  game.initGame();
-});
-
-console.log('Game script loaded');
