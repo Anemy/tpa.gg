@@ -20,6 +20,10 @@ const maxPlayerSpeed = 450; // IDK WHAT THIS SHOULD BE
 const shootRate = 400;
 const friction = 70;
 
+// lobbies
+const maxPlayers = 4;
+const minPlayers = 4;
+
 // bullet
 const bulletSpeed = 600;
 

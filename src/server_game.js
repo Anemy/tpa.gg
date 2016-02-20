@@ -3,11 +3,10 @@
 This runs an instance of the game on the server, making clients stay legit and having fun
 
 */
-
-
 var fs = require('fs');
 var vm = require('vm');
 var path = require('path');
+// loads in all the js in the most jank way possible
 var includeInThisContext = function(path) {
     var code = fs.readFileSync(path);
     vm.runInThisContext(code, path);
@@ -24,6 +23,18 @@ var port = childStartAgruments[0];
 
 console.log('Child: Process started, going to use port: ' + port);
 
+// contains all of the client connections and things pertaining to the lobby
+var Lobby = function() {
+  this.pop = 0; // players in game
+  this.clients = [];
+
+  // boolean says if game is going or not - don't let people join when it's going
+  this.inProgress = false;
+}
+
+lobby = new Lobby();
+game = new Game(true); // sends true because it IS THE SERVER
+
 // Receive message from parent server (JSON format?)
 process.on('message', function(m) {
   var messageParts = m.split('.');
@@ -34,18 +45,40 @@ process.on('message', function(m) {
   }
 });
 
-// contains all of the client connections and things pertaining to the lobby
-var lobby = function() {
-  this.pop = 0; // players in game
-  this.clients = [];
-}
-
-// game = new Game();
-// game.startGameLoop();
-
 // socket io creation and listening
 var io = require('socket.io').listen(port);
 io.sockets.on('connection', function(client) {
+
+  if(lobby.clients >= maxPlayers) {
+    // don't allow them to join! too many people!
+    client.send('m.serverFull');
+  }
+  else if(lobby.inProgress) {
+    client.send('m.gameInProgress');
+  }
+  else {
+    // add the client to the game
+    lobby.pop++;
+    lobby.clients.push(client);
+
+    // handle message from client
+    client.on('message', function(message) {
+      if(message == null || message == undefined) {
+        return;
+      }
+
+      var messageParts = message.split('.');
+      var messageType = messageParts[0] || null;
+
+      if (messageType == "input") {
+        // handle input
+      }
+      else if (messageType == 'p') { // ping request
+        client.send('p.' + messageParts[1]);
+      }
+    });
+  }
+
   client.on('disconnect', function() {
     // tell the game to remove a player?
   });

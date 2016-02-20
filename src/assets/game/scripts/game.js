@@ -88,16 +88,16 @@ Game.prototype.gameLoop = function() {
 
 // called when the client recieves a packet from the server
 Game.prototype.clientRecieveMessage = function(data) {
-
+  
 }
 
 // called when the packet from the server is a game packet to parse
 Game.prototype.clientParseGameData = function(data) {
-
+  
 }
 
 Game.prototype.checkCollisions = function(delta) {
-
+  
 }
 
 // calls all of the updating functions and collision handling
