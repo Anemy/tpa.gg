@@ -19,6 +19,7 @@ gulp.task('copy', function() {
     .src([
       './src/Procfile',
       './src/server.js',
+      './src/server_game.js',
       './package.json'
     ])
     .pipe(gulp.dest('dist'));

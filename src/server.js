@@ -7,6 +7,11 @@ var exphbs = require('express-handlebars');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
+var child_process = require('child_process');
+
+var children = [];
+// the port where games run off of to start
+const portStart = 4456;
 
 mongoose.connect(process.env.MONGODB);
 
@@ -43,4 +48,24 @@ app.get('*', function(req, res) {
 
 var server = app.listen(app.get('port'), function () {
   console.log('the server is listening on port %s', app.get('port'));
+
+  var args = [portStart];
+
+  // starting a process for users to play games on 
+  children.push(child_process.fork(__dirname + "/server_game.js", args));
+});
+
+
+// register external process exits
+var cleanExit = function() { process.exit() };
+process.once("SIGINT", cleanExit); // catch ctrl-c
+process.once("SIGTERM", cleanExit); // catch kill
+
+// handle exit by killing children
+process.once("exit", function() {
+    console.log("Killing children");
+    children.forEach(function(child) {
+        child.kill();
+        console.log("Child eliminated.");
+    });
 });

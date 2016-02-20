@@ -109,7 +109,7 @@ var render_player = function(player) {
   // drawing circle player
   ctx.beginPath();
   ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI, false);
-  ctx.fillStyle = '#8E8E93';
+  ctx.fillStyle = '#52EDC7';
   ctx.fill();
   ctx.lineWidth = 1;
   ctx.strokeStyle = '#4A4A4A';
