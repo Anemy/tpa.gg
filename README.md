@@ -27,5 +27,5 @@ $ browser http://localhost:8080
 
 ```bash
 $ npm run deploy
-$ browser http://localhost:8080
+$ browser https://secret-bastion-53821.herokuapp.com/
 ```
