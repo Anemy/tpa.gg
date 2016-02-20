@@ -22,11 +22,11 @@ var Game = function(server) {
 
   // array of Player objects (player.js)
   this.players = [];
-  this.players.push(new Player(20,20));
+  this.players.push(new Player(gameWidth/2,gameHeight/2));
 
   this.bullets = [];
 
-  lastTime = Date.now();
+  this.lastTime = Date.now();
 
   if(server) {
     // server exclusive things
@@ -38,32 +38,40 @@ var Game = function(server) {
 
 // called exclusively by client, creates a game object and starts it going
 Game.prototype.initGame = function() {
-  canvas = document.createElement("canvas");
+  canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
 
-  window.addEventListener('keyup', handleKeyUp , false);
-  window.addEventListener('keydown', handleKeyDown , false);
+  window.addEventListener('keyup', handleKeyup , false);
+  window.addEventListener('keydown', handleKeydown , false);
 
   canvas.width = width;
   canvas.height = height;
+
+  this.startGameLoop();
 }
 
 Game.prototype.startGameLoop = function() {
-  this.gameLoopInterval = startInterval(function() {
-    this.gameLoop();
+  var that = this;
+  this.gameLoopInterval = setInterval(function() {
+    that.gameLoop();
   }, fps);
 }
 
 Game.prototype.gameLoop = function() {
   var currentTime = Date.now();
 
-  var deltaTime = (currentTime - lastTime)/1000;
+  var deltaTime = (currentTime - this.lastTime)/1000;
+
+  // inactive tab catch
+  if(deltaTime > 0.25) {
+    deltaTime = 0.25;
+  }
   
   this.update(deltaTime);
 
-  render();
+  render(deltaTime);
 
-  lastTime = currentTime;
+  this.lastTime = currentTime;
 }
 
 // calls all of the updating functions and collision handling
@@ -73,11 +81,10 @@ Game.prototype.update = function(delta) {
   }
 }
 
-
-console.log('Game script loaded');
-
 // clientside running for now
 $(document).ready(function() {
   game = new Game();
   game.initGame();
 });
+
+console.log('Game script loaded');

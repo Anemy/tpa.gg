@@ -7,7 +7,6 @@ This file controls all of the key inputs
 
 var handleKeydown = function (e) {
   var keyCode = e.keyCode;
-  var keyCodes = Constants.keyCodes;
 
   switch(keyCode) {
     case keyCodes.space:
@@ -30,7 +29,6 @@ var handleKeydown = function (e) {
 
 var handleKeyup = function (e) {
   var keyCode = e.keyCode;
-  var keyCodes = Constants.keyCodes;
 
   switch(keyCode) {
     case keyCodes.space:
