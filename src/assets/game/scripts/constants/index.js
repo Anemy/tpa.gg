@@ -11,12 +11,17 @@ const height = 600;
 const gameWidth = 2400;
 const gameHeight = 1800;
 
+// player
 const playerRadius = 20;
+const playerGunSize = 10;
 const playerJump = -300;
-const playerAcceleration = 350;
+const playerAcceleration = 400;
 const maxPlayerSpeed = 400; // IDK WHAT THIS SHOULD BE
-
+const shootRate = 400;
 const friction = 70;
+
+// bullet
+const bulletSpeed = 600;
 
 const fps = 1000 / 60; // 60 is the real fps
 

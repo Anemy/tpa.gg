@@ -22,6 +22,8 @@ var Game = function(server) {
 
   // array of Player objects (player.js)
   this.players = [];
+
+  // test player
   this.players.push(new Player(gameWidth/2,gameHeight/2));
 
   this.bullets = [];
@@ -74,16 +76,42 @@ Game.prototype.gameLoop = function() {
   
   this.update(deltaTime);
 
+  this.checkCollisions(deltaTime);
+
   render(deltaTime);
 
   this.lastTime = currentTime;
 }
 
+Game.prototype.checkCollisions = function(delta) {
+
+}
+
 // calls all of the updating functions and collision handling
 Game.prototype.update = function(delta) {
-  for(var i = 0; i < this.players.length; i++) {
-    this.players[i].update(delta);
+  // bullet updating
+  for(var i = this.bullets.length - 1; i >= 0; i--) {
+    // console.log('Try to update bullet: ' + i);
+    if(!this.bullets[i].update(delta)) {
+      // kill dead bullet
+      // add particles here
+      this.bullets.splice(i,1);
+    }
   }
+
+  for(var i = 0; i < this.players.length; i++) {
+    // player update
+    this.players[i].update(delta);
+
+    // bullet shooting/creation
+    if(this.players[i].shoot && this.players[i].shootCounter <= 0) {
+      this.players[i].shootCounter = shootRate;
+
+      var shootAngle = Math.atan2(this.players[i].mouseY, this.players[i].mouseX);
+      this.bullets.push(new Bullet(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), bulletSpeed*Math.cos(shootAngle), bulletSpeed*Math.sin(shootAngle), i));
+    }
+  }
+
 }
 
 // clientside running for now

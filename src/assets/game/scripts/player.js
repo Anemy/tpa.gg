@@ -12,12 +12,16 @@ var Player = function (x, y) {
   this.yDir = 0;
 
   this.radius = playerRadius;
+  this.gunSize = playerGunSize;
 
   // boolean says if they want to shoot or not
   this.shoot = false;
+  this.shootCounter = 0;
 
   this.mouseX = 0;
   this.mouseY = 0;
+
+  this.health = 100;
 
   // player movement
   this.left = false;
@@ -28,6 +32,11 @@ var Player = function (x, y) {
   // handles the updating of the player
   this.update = function(delta) {
     // console.log('Player speed: ' + this.xDir);
+
+    // when this hits 0 the player can shoot again
+    if(this.shootCounter > 0) {
+      this.shootCounter -= delta*1000;
+    }
 
     if(this.left) {
       this.xDir -= playerAcceleration * delta;

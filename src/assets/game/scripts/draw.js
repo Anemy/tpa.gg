@@ -52,6 +52,10 @@ var render = function(delta) {
     render_player(game.players[i]);
   }
 
+  for(var i = 0; i < game.bullets.length; i++) {
+    render_bullet(game.bullets[i]);
+  }
+
   //un-translate for the side scrolling  XXXX
   ctx.translate(sideScrollX, 0);
   //un-translate for the side scrolling  YYYY
@@ -59,16 +63,12 @@ var render = function(delta) {
 }
 
 var render_map = function(delta) {
-
-  // console.log('Grid glow: ' + gridGlow);
-
   // borders
   ctx.fillStyle = "rgb(0,0,0)";
   ctx.fillRect(0, 0, gameWidth, 2);
   ctx.fillRect(0, 0, 2, gameHeight);
   ctx.fillRect(0, gameHeight, gameWidth, 2);
   ctx.fillRect(gameWidth, 0, 2, gameHeight);
-
 
   // glowing grid updating
   if(gridGlowUp) {
@@ -88,7 +88,7 @@ var render_map = function(delta) {
 
   // x 
   for(var i = 0; i < gridSize; i++) {
-    ctx.fillRect(i*(gameWidth/gridSize), 0, 1, gameWidth);
+    ctx.fillRect(i*(gameWidth/gridSize), 0, 1, gameHeight);
   }
   // y
   for(var i = 0; i < gridSize; i ++) {
@@ -109,15 +109,15 @@ var render_player = function(player) {
   ctx.fill();
   ctx.lineWidth = 1;
   ctx.strokeStyle = '#898C90';
-  ctx.closePath();
   ctx.stroke();
+  ctx.closePath();
 
   ctx.fillStyle = '#111111';
 
   ctx.save();
   ctx.translate( player.x, player.y );
   ctx.rotate(Math.atan2(player.mouseY, player.mouseX));
-  ctx.fillRect(20, 0, 10, 2);
+  ctx.fillRect(player.radius, 0, player.gunSize, 2);
   ctx.translate( -player.x, -player.y );
   // ctx.drawImage( myImageOrCanvas, 0, 0 );
   ctx.restore();
@@ -126,4 +126,12 @@ var render_player = function(player) {
   // ctx.rotate(Math.atan2(player.mouseY, player.mouseX), player.x, player.y);// * (Math.PI/180)
   // ctx.fillRect(player.x, player.y, 10, 2);
   // ctx.rotate(-(Math.atan2(player.mouseY, player.mouseX)), player.x, player.y);// * (Math.PI/180)
+}
+
+var render_bullet = function(bullet) {
+  ctx.beginPath();
+  ctx.arc(bullet.x, bullet.y, bullet.radius, 0, 2 * Math.PI, false);
+  ctx.fillStyle = '#220000';
+  ctx.fill();
+  ctx.closePath();
 }

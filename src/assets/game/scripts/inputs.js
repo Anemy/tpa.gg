@@ -74,7 +74,7 @@ var mouseMove = function(e) {
   if(game.players[localPlayerID].x <= (width/4)) {
     game.players[localPlayerID].mouseX -= (width/4) + game.players[localPlayerID].x; // you will be closer to the left, aim has to adjust mouse
   }
-  else if(game.players[localPlayerID].x >= gameWidth - (width*(3/4))) {
+  else if(game.players[localPlayerID].x >= gameWidth - (width*(1/4))) {
     game.players[localPlayerID].mouseX -= (width*(3/4)) + (game.players[localPlayerID].x-gameWidth); // you will be closer to the left, aim has to adjust mouse
   }
   else {
@@ -83,7 +83,7 @@ var mouseMove = function(e) {
   if(game.players[localPlayerID].y <= (height/4)) {
     game.players[localPlayerID].mouseY -= (height/4) + game.players[localPlayerID].y; // you will be closer to the left, aim has to adjust mouse
   }
-  else if(game.players[localPlayerID].y >= gameHeight - (height*(3/4))) {
+  else if(game.players[localPlayerID].y >= gameHeight - (height*(1/4))) {
     game.players[localPlayerID].mouseY -= (height*(3/4)) + (game.players[localPlayerID].y-gameHeight); // you will be closer to the left, aim has to adjust mouse
   }
   else {
