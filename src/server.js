@@ -5,15 +5,14 @@ require('dotenv').config({
 var express = require('express');
 var exphbs = require('express-handlebars');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
 
 var child_process = require('child_process');
-
 var children = [];
 // the port where games run off of to start
-const portStart = 4456;
+const portStart = 8082;
 
-mongoose.connect(process.env.MONGODB);
+// var mongoose = require('mongoose');
+// mongoose.connect(process.env.MONGODB);
 
 
 var app = express();

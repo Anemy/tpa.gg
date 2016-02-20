@@ -55,7 +55,6 @@ Game.prototype.initGame = function() {
 
   canvasRect = canvas.getBoundingClientRect();
 
-
   this.startGameLoop();
 }
 
@@ -95,10 +94,12 @@ Game.prototype.update = function(delta) {
   for(var i = this.bullets.length - 1; i >= 0; i--) {
     // console.log('Try to update bullet: ' + i);
     if(!this.bullets[i].update(delta)) { // dead bullet?
-      // spawn particles
-      for(var k = 0; k < 20; k++) { // 20 particles to make
-        var colorToBe = 'rgba(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255); // THE END ) NOT ADDED BECause ALPHA ADDED
-        this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, returnNeg(Math.random()*200), returnNeg(Math.random()*200), colorToBe));
+      if(!this.server) { // only spawn particles on the client
+        // spawn particles
+        for(var k = 0; k < 20; k++) { // 20 particles to make
+          var colorToBe = 'rgba(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255); // THE END ) NOT ADDED BECause ALPHA ADDED
+          this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, returnNeg(Math.random()*200), returnNeg(Math.random()*200), colorToBe));
+        }
       }
 
       // kill dead bullet
@@ -121,13 +122,14 @@ Game.prototype.update = function(delta) {
   }
 
   //particle updating
-  for(var i = this.particles.length - 1; i >= 0; i--) {
-    if(!this.particles[i].update(delta)) {
-      // kill dead particle
-      this.particles.splice(i,1);
+  if(!this.server) {
+    for(var i = this.particles.length - 1; i >= 0; i--) {
+      if(!this.particles[i].update(delta)) {
+        // kill dead particle
+        this.particles.splice(i,1);
+      }
     }
   }
-
 }
 
 // clientside running for now

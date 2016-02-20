@@ -76,15 +76,15 @@ var render_map = function(delta) {
 
   // glowing grid updating
   if(gridGlowUp) {
-    gridGlow += 75 * delta;
+    gridGlow += 80 * delta;
   }
   else {
-    gridGlow -= 75 * delta;
+    gridGlow -= 80 * delta;
   }
-  if(gridGlowUp && gridGlow > 175) {
+  if(gridGlowUp && gridGlow > 200) {
     gridGlowUp = false;
   }
-  else if(!gridGlowUp && gridGlow < 25) {
+  else if(!gridGlowUp && gridGlow < 50) {
     gridGlowUp = true;
   }
 

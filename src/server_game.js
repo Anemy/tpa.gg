@@ -5,20 +5,24 @@ This runs an instance of the game on the server, making clients stay legit and h
 */
 
 
-// var fs = require('fs');
-// var vm = require('vm');
-// var path = require('path');
-// var includeInThisContext = function(path) {
-//     var code = fs.readFileSync(path);
-//     vm.runInThisContext(code, path);
-// }.bind(this);
+var fs = require('fs');
+var vm = require('vm');
+var path = require('path');
+var includeInThisContext = function(path) {
+    var code = fs.readFileSync(path);
+    vm.runInThisContext(code, path);
+}.bind(this);
 
-// includeInThisContext(__dirname+"/assets/game/scripts/game.js");
-
+// The server uses the same game code as the client! spooky
+includeInThisContext(__dirname+"/assets/game/scripts/game.js");
+includeInThisContext(__dirname+"/assets/game/scripts/player.js");
+includeInThisContext(__dirname+"/assets/game/scripts/bullet.js");
+includeInThisContext(__dirname+"/assets/game/scripts/constants/index.js");
 
 var childStartAgruments = process.argv[2].split('.');
-// console.log('Hello this is child.');
 var port = childStartAgruments[0];
+
+console.log('Child: Process started, going to use port: ' + port);
 
 var io = null;
 
@@ -31,6 +35,9 @@ process.on('message', function(m) {
             break;
     }
 });
+
+// game = new Game();
+// game.startGameLoop();
 
 
 //the game process kills itself
