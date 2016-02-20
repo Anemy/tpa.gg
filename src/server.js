@@ -2,25 +2,22 @@ require('dotenv').config({
   path: '../.env',
   silent: true
 });
+
+const portNum = (process.env.PORT || 8080);
+
 var express = require('express');
 var exphbs = require('express-handlebars');
 var bodyParser = require('body-parser');
 
-var child_process = require('child_process');
-var children = [];
-// the port where games run off of to start
-const portStart = 8082;
-
-// var mongoose = require('mongoose');
-// mongoose.connect(process.env.MONGODB);
-
-
 var app = express();
-app.set('port', (process.env.PORT || 8080));
-
+app.set('port', portNum);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+var server_game = require('./server_game');
+// console.log('servergame: ' + server_game);
+// console.log('servergame: ' + JSON.stringify(server_game));
 
 
 app.set('views', 'views')
@@ -37,35 +34,15 @@ app.use('/assets',  express.static('./assets'));
 
 var homeController = require('./controllers/home');
 
-
 app.get('/', homeController.getRoot);
 
 app.get('*', function(req, res) {
   res.sendStatus(404);
 });
 
-
 var server = app.listen(app.get('port'), function () {
   console.log('the server is listening on port %s', app.get('port'));
-
-  // send the first child the port to goooo
-  var args = [portStart];
-
-  // starting a process for users to play games on 
-  children.push(child_process.fork(__dirname + "/server_game.js", args));
 });
 
-
-// register external process exits
-var cleanExit = function() { process.exit() };
-process.once("SIGINT", cleanExit); // catch ctrl-c
-process.once("SIGTERM", cleanExit); // catch kill
-
-// handle exit by killing children
-process.once("exit", function() {
-    console.log("Killing children");
-    children.forEach(function(child) {
-        child.kill();
-        console.log("Child eliminated.");
-    });
-});
+// starts the socket listening on portNum
+server_game.startListening(server, portNum);

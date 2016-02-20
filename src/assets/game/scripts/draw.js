@@ -6,7 +6,7 @@ This contains all of the drawing functionality
 
 const gridSize = 50;
 
-// gridGlow goes up to 150 and down to 50
+// gridGlow goes up to 150 and down to 50 <- I hard code these in later in render_map
 var gridGlow = 100;
 var gridGlowUp = true; // says whether to increase or decrease grid glow
 const gridGlowDiff = 50;
@@ -17,7 +17,7 @@ var render = function(delta) {
   var sideScrollX = 0;
   var sideScrollY = 0;
 
-  // translate the screen based on the local player's position
+  // translate the screen based on the local player's position (gives the cool following the player feel)
   if(localPlayerID != undefined && game.players[localPlayerID] != undefined) {
     // x scrolling amount
     if(game.players[localPlayerID].x <= width*(1/4)) {
@@ -46,18 +46,26 @@ var render = function(delta) {
     ctx.translate(0,-sideScrollY);
   }
 
+  // MAP
   render_map(delta);
 
+  // PARTICLES
   for(var i = 0; i < game.particles.length; i++) {
     render_particle(game.particles[i]);
   }
 
+  // PLAYERS
   for(var i = 0; i < game.players.length; i++) {
     render_player(game.players[i]);
   }
 
+  // BULLETS
   for(var i = 0; i < game.bullets.length; i++) {
     render_bullet(game.bullets[i]);
+  }
+
+  if(game.countdownTimer) {
+    drawCountDownTimer();
   }
 
   //un-translate for the side scrolling  XXXX
@@ -66,7 +74,37 @@ var render = function(delta) {
   ctx.translate(0, sideScrollY);
 }
 
+// what could this function possibly do?!
+var drawCountDownTimer = function() {
+  // this ugly but it does the countdown decreasing font size
+  var fontSize = Math.floor(120 * (1 + (1 - (game.countdownTimer%1))));
+  if(game.countdownTimer%1 <= .8) {
+    fontSize = Math.floor(120 * (game.countdownTimer%1)*(1.4));
+  }
+
+  ctx.font = fontSize + "px Arial";
+  ctx.fillStyle = "#0BD318";
+
+  // console.log('Fontsize: ' + fontSize + " count: " + game.countdownTimer);
+
+  if(game.countdownTimer < 1) {
+    ctx.fillText("GO!", game.players[localPlayerID].x - fontSize*(5/6), game.players[localPlayerID].y - fontSize/4);
+  }
+  else {
+    ctx.fillText(Math.floor(game.countdownTimer) + " ", game.players[localPlayerID].x - fontSize/4, game.players[localPlayerID].y + fontSize/12);
+  }
+}
+
+// draws the map
 var render_map = function(delta) {
+
+  // around the border
+  ctx.fillStyle = '#F7F7F7';
+  ctx.fillRect(-width/2, -height/2, gameWidth + width, height/2); // top
+  ctx.fillRect(-width/2, -height/2, width/2, gameHeight + height); // left
+  ctx.fillRect(gameWidth, -height/2, width/2, gameHeight + height); // right
+  ctx.fillRect(-width/2, gameHeight, gameWidth + width, height/2); // bottom
+
   // borders
   ctx.fillStyle = "rgb(0,0,0)";
   ctx.fillRect(0, 0, gameWidth, 2);

@@ -20,12 +20,15 @@ const maxPlayerSpeed = 450; // IDK WHAT THIS SHOULD BE
 const shootRate = 400;
 const friction = 70;
 
+// countdown time before a game starts
+const countdownTimerStart = 7; // in seconds
+
 // lobbies
-const maxPlayers = 4;
-const minPlayers = 4;
+const maxPlayers = 2;
+const minPlayers = 2;
 
 // bullet
-const bulletSpeed = 600;
+const bulletSpeed = 700;
 
 const fps = 1000 / 60; // 60 is the real fps
 

@@ -32,6 +32,9 @@ var Game = function(server) {
 
   this.lastTime = Date.now();
 
+  // time until the game starts
+  this.countdownTimer = countdownTimerStart;
+
   if(server) {
     // server exclusive things
   }
@@ -74,10 +77,16 @@ Game.prototype.gameLoop = function() {
   if(deltaTime > 0.25) {
     deltaTime = 0.25;
   }
-  
-  this.update(deltaTime);
 
-  this.checkCollisions(deltaTime);
+  // if game hasn't started yet don't do any updates
+  if(this.countdownTimer > 0) {
+    this.countdownTimer -= deltaTime;
+  }
+  else {
+    this.update(deltaTime);
+
+    this.checkCollisions(deltaTime);
+  }
 
   if(!this.server) {
     render(deltaTime);
@@ -88,16 +97,16 @@ Game.prototype.gameLoop = function() {
 
 // called when the client recieves a packet from the server
 Game.prototype.clientRecieveMessage = function(data) {
-  
+
 }
 
 // called when the packet from the server is a game packet to parse
 Game.prototype.clientParseGameData = function(data) {
-  
+
 }
 
 Game.prototype.checkCollisions = function(delta) {
-  
+
 }
 
 // calls all of the updating functions and collision handling
