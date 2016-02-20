@@ -159,8 +159,14 @@ var render_player = function(player) {
   // drawing gun VV
   ctx.save();
 
-  ctx.translate( player.x, player.y );
-  ctx.rotate(Math.atan2(player.mouseY, player.mouseX) -Math.PI/90);
+  ctx.translate(player.x, player.y);
+  
+  if(!astroidMode) {
+    ctx.rotate(Math.atan2(player.mouseY, player.mouseX) -Math.PI/90);
+  }
+  else {
+    ctx.rotate(player.rotation * (Math.PI/180));
+  }
 
   ctx.fillRect(player.radius, 0, player.gunSize, 4);
 

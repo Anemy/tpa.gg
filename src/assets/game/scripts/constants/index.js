@@ -19,6 +19,7 @@ const playerAcceleration = 450;
 const maxPlayerSpeed = 450; // IDK WHAT THIS SHOULD BE
 const shootRate = 400;
 const friction = 70;
+const astroidModeRotationSpeed = 10;
 
 // countdown time before a game starts
 const countdownTimerStart = 7; // in seconds

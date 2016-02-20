@@ -21,6 +21,8 @@ var Player = function (x, y) {
   this.mouseX = 0;
   this.mouseY = 0;
 
+  this.rotation = 0; // used in asteroid version
+
   this.health = 100;
 
   // player movement
@@ -38,29 +40,65 @@ updatePlayer = function(player, delta) {
     player.shootCounter -= delta*1000;
   }
 
-  if(player.left) {
-    player.xDir -= playerAcceleration * delta;
-    if(player.xDir < -maxPlayerSpeed) {
-      player.xDir = -maxPlayerSpeed;
+  if(!astroidMode) {
+    // update player movement
+    if(player.left) {
+      player.xDir -= playerAcceleration * delta;
+      if(player.xDir < -maxPlayerSpeed) {
+        player.xDir = -maxPlayerSpeed;
+      }
     }
-  }
-  if(player.right) {
-    player.xDir += playerAcceleration * delta;
-    if(player.xDir > maxPlayerSpeed) {
-      player.xDir = maxPlayerSpeed;
+    if(player.right) {
+      player.xDir += playerAcceleration * delta;
+      if(player.xDir > maxPlayerSpeed) {
+        player.xDir = maxPlayerSpeed;
+      }
     }
-  }
 
-  if(player.up) {
-    player.yDir -= playerAcceleration * delta;
-    if(player.yDir < -maxPlayerSpeed) {
-      player.yDir = -maxPlayerSpeed;
+    if(player.up) {
+      player.yDir -= playerAcceleration * delta;
+      if(player.yDir < -maxPlayerSpeed) {
+        player.yDir = -maxPlayerSpeed;
+      }
+    }
+    if(player.down) {
+      player.yDir += playerAcceleration * delta;
+      if(player.yDir > maxPlayerSpeed) {
+        player.yDir = maxPlayerSpeed;
+      }
     }
   }
-  if(player.down) {
-    player.yDir += playerAcceleration * delta;
-    if(player.yDir > maxPlayerSpeed) {
-      player.yDir = maxPlayerSpeed;
+  else {
+    // update player movement astroid mode // rotation is in degrees for some reason
+    if(player.left) {
+      this.rotation += astroidModeRotationSpeed * delta;
+    }
+    if(player.right) {
+      this.rotation -= astroidModeRotationSpeed * delta;
+    }
+
+    if(Math.abs(this.rotation) > 360) {
+      this.rotation %= 360;
+    }
+
+    // boosting movement
+    if(player.up) {
+      player.xDir += playerAcceleration*Math.cos(this.rotation * (Math.PI/180));
+      player.yDir += playerAcceleration*Math.sin(this.rotation * (Math.PI/180));
+
+      // speed limit
+      if(player.xDir < -maxPlayerSpeed) {
+        player.xDir = -maxPlayerSpeed;
+      }
+      if(player.xDir > maxPlayerSpeed) {
+        player.xDir = maxPlayerSpeed;
+      }
+      if(player.yDir < -maxPlayerSpeed) {
+        player.yDir = -maxPlayerSpeed;
+      }
+      if(player.yDir > maxPlayerSpeed) {
+        player.yDir = maxPlayerSpeed;
+      }
     }
   }
 

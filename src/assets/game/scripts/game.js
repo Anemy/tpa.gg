@@ -16,6 +16,8 @@ var localPlayerID = 0;
 
 var game; // game is a Game object
 
+const astroidMode = false;
+
 // param: server - true/false - true means it's the server
 var Game = function(server, lobby, serverSendGameData) {
   this.server = server;
