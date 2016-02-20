@@ -44,8 +44,13 @@ Game.prototype.initGame = function() {
   window.addEventListener('keyup', handleKeyup , false);
   window.addEventListener('keydown', handleKeydown , false);
 
+  window.addEventListener('mousemove', mouseMove, false);
+
   canvas.width = width;
   canvas.height = height;
+
+  canvasRect = canvas.getBoundingClientRect();
+
 
   this.startGameLoop();
 }

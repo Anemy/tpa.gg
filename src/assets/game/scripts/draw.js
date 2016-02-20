@@ -62,6 +62,14 @@ var render_map = function(delta) {
 
   // console.log('Grid glow: ' + gridGlow);
 
+  // borders
+  ctx.fillStyle = "rgb(0,0,0)";
+  ctx.fillRect(0, 0, gameWidth, 2);
+  ctx.fillRect(0, 0, 2, gameHeight);
+  ctx.fillRect(0, gameHeight, gameWidth, 2);
+  ctx.fillRect(gameWidth, 0, 2, gameHeight);
+
+
   // glowing grid updating
   if(gridGlowUp) {
     gridGlow += 75 * delta;
@@ -84,18 +92,38 @@ var render_map = function(delta) {
   }
   // y
   for(var i = 0; i < gridSize; i ++) {
+    if(i*(gameWidth/gridSize) > gameHeight) { // keeping it square yo
+      break;
+    }
     ctx.fillRect(0, i*(gameWidth/gridSize), gameWidth, 1);
   }
 }
 
 // draws the player passed
 var render_player = function(player) {
+
+  // drawing base circle player
   ctx.beginPath();
   ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI, false);
   ctx.fillStyle = '#DBDDDE';
   ctx.fill();
   ctx.lineWidth = 1;
-  ctx.strokeStyle = '#003300';
+  ctx.strokeStyle = '#898C90';
   ctx.closePath();
   ctx.stroke();
+
+  ctx.fillStyle = '#111111';
+
+  ctx.save();
+  ctx.translate( player.x, player.y );
+  ctx.rotate(Math.atan2(player.mouseY, player.mouseX));
+  ctx.fillRect(20, 0, 10, 2);
+  ctx.translate( -player.x, -player.y );
+  // ctx.drawImage( myImageOrCanvas, 0, 0 );
+  ctx.restore();
+
+  // drawing turret on gun
+  // ctx.rotate(Math.atan2(player.mouseY, player.mouseX), player.x, player.y);// * (Math.PI/180)
+  // ctx.fillRect(player.x, player.y, 10, 2);
+  // ctx.rotate(-(Math.atan2(player.mouseY, player.mouseX)), player.x, player.y);// * (Math.PI/180)
 }

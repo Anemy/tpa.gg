@@ -16,6 +16,9 @@ var Player = function (x, y) {
   // boolean says if they want to shoot or not
   this.shoot = false;
 
+  this.mouseX = 0;
+  this.mouseY = 0;
+
   // player movement
   this.left = false;
   this.right = false;
