@@ -4,13 +4,18 @@ This file controls all of the key inputs
 
 */
 
+// limit how many downs are sent for one key
+
+var lastKeyDown = -1;
 
 var handleKeydown = function (e) {
   var keyCode = e.keyCode;
 
-  socket.emit('input' ,
-
-  'm.i.d.' + keyCode);
+  if(lastKeyDown != keyCode) {
+    var message = JSON.stringify({'event': 'input', 'body': {'keyCode': keyCode, 'keyType': 'd'}});
+    socket.send(message);
+  }
+  lastKeyDown = keyCode;
 
   switch(keyCode) {
     case keyCodes.space:
@@ -38,7 +43,9 @@ var handleKeydown = function (e) {
 var handleKeyup = function (e) {
   var keyCode = e.keyCode;
 
-  socket.emit('m.i.u.' + keyCode);
+  lastKeyDown = -1;
+  var message = JSON.stringify({'event': 'input', 'body': {'keyCode': keyCode, 'keyType': 'u'}});
+  socket.send(message);
 
   switch(keyCode) {
     case keyCodes.space:
@@ -66,6 +73,8 @@ var handleKeyup = function (e) {
 
 // alters local player's target
 var mouseMove = function(e) {
+
+  // SENDS TO SERVER AT THE BOTTOM OF FUNCTION
 
   if(e.offsetX) {
     game.players[localPlayerID].mouseX = e.offsetX;
@@ -96,8 +105,6 @@ var mouseMove = function(e) {
     game.players[localPlayerID].mouseY -= height/2;
   }
 
-   // = (e.clientX - canvasRect.left)/(canvasRect.right - canvasRect.left) * width,
-   // = (e.clientY - canvasRect.top)/(canvasRect.bottom - canvasRect.top) * height;
-
-  // console.log('Mouse position: ' + mousePos.x + ',' + mousePos.y);
+  var message = JSON.stringify({'event': 'input', 'body': {'x': game.players[localPlayerID].mouseX, 'y': game.players[localPlayerID].mouseY, 'keyType': 'm'}});
+  socket.send(message);
 }

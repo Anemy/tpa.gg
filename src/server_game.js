@@ -23,9 +23,45 @@ includeInThisContext(__dirname+"/assets/game/scripts/constants/index.js");
 
 var clientEventHandlers = {
   input: function(body, client){
-    console.log("input");
-    if (client.inLobby && client.lobbyId){
-      console.log(body);
+    // console.log('inputs recieved');
+    if (client.inLobby && client.lobbyId && lobbies[client.lobbyId] && lobbies[client.lobbyId].inProgress && lobbies[client.lobbyId].clients[client.token]){ // check if it's a valid user
+      // handle client input here
+      // console.log("meow: " + body);
+      if(body.keyType == 'u' || body.keyType == 'd') {
+        if(isNaN(body.keyCode)) { // that's not a number!
+          return;
+        }
+        var keyType = false;
+        if(body.keyType == 'd') {
+          keyType = true;
+        }
+        switch(body.keyCode) {
+          case keyCodes.space:
+            lobbies[client.lobbyId].game.players[client.inGameNumber].shoot = keyType;
+            break;
+          case keyCodes.up:
+          case keyCodes.w:
+            lobbies[client.lobbyId].game.players[client.inGameNumber].up = keyType;
+            break;
+          case keyCodes.down:
+          case keyCodes.s:
+            lobbies[client.lobbyId].game.players[client.inGameNumber].down = keyType;
+            break;
+          case keyCodes.right:
+          case keyCodes.d:
+            lobbies[client.lobbyId].game.players[client.inGameNumber].right = keyType;
+            break;
+          case keyCodes.left:
+          case keyCodes.a:
+            lobbies[client.lobbyId].game.players[client.inGameNumber].left = keyType;
+            break;
+        }
+      }
+      else if(body.keyType == 'm' && body.x !== undefined && body.y !== undefined &&
+          !isNaN(body.x) && !isNaN(body.y)) { // ensure they aren't doing crazy stuff sending us crazy x y!
+        lobbies[client.lobbyId].game.players[client.inGameNumber].mouseX = body.x;
+        lobbies[client.lobbyId].game.players[client.inGameNumber].mouseY = body.y;
+      }
     }
   },
   ping: function(body, client){
@@ -52,10 +88,6 @@ var Lobby = function(lobbyId) {
   this.inProgress = false;
 
   this.game = new Game(true, this, serverSendGameData);
-
-  this.handleInput = function() {
-    console.log("Handle input. TODO");
-  }
 }
 
 var launchGame = function(lobby) {
@@ -67,18 +99,21 @@ var launchGame = function(lobby) {
     var clientId = Object.keys(lobby.clients)[i];
     var client = lobby.clients[clientId];
 
-    var message = JSON.stringify({"event": "gameStart", "body": clientId});
+    // attaching an ingame number to each client
+    client.inGameNumber = i;
+
+    var message = JSON.stringify({"event": "gameStart", "body": {"clientId": clientId, "inGameNumber": client.inGameNumber}});
     client.send(message);
   }
 
-  lobby.game.startGameLoop();
-  // add players here?
-
-  // move this into somewhere else at some point
+  // add the new players
   lobby.game.players.push(new Player(playerRadius, playerRadius)); // top left
   // lobby.game.players.push(new Player(gameWidth - playerRadius, playerRadius)); // top right
   // lobby.game.players.push(new Player(playerRadius, gameHeight - playerRadius)); // bottom left
   lobby.game.players.push(new Player(gameWidth - playerRadius, gameHeight - playerRadius)); // bottom right
+
+  // start the game running
+  lobby.game.startGameLoop();
 }
 
 // sends all of the game data of the indicated lobby from the server
@@ -94,6 +129,7 @@ var serverSendGameData = function(lobby) {
   dataToSend.bullets = lobby.game.bullets;
 
   var message = JSON.stringify({"event": "gameData", "body": dataToSend});
+  // console.log('Send this message to the clients: ' + message);
   // shoot the data to the clients
   for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
     var clientId = Object.keys(lobby.clients)[i];

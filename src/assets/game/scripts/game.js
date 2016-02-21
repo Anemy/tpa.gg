@@ -33,7 +33,7 @@ var Game = function(server, lobby, serverSendGameData) {
   this.players = [];
 
   // test player
-  this.players.push(new Player(gameWidth/2,gameHeight/2));
+  // this.players.push(new Player(gameWidth/2,gameHeight/2));
 
   this.bullets = [];
 
@@ -112,7 +112,7 @@ Game.prototype.gameLoop = function() {
 // called when the packet from the server is a game packet to parse
 // populate local fields with data from the server
 Game.prototype.clientParseGameData = function(data) {
-  data = JSON.parse(data);
+  // console.log('Data recieved: ' + data);
 
   var timeSinceMessageSent = new Date().getTime() - data.timestamp; // in ms
 
@@ -132,14 +132,15 @@ Game.prototype.checkCollisions = function(delta) {
           Math.abs(this.bullets[k].x - this.players[i].x) < this.players[i].radius + this.bullets[k].radius &&// x proximity
           Math.abs(this.bullets[k].y - this.players[i].y) < this.players[i].radius + this.bullets[k].radius) {
         // hurt the playa
-        this.players[i].health -= bullets[k].damage;
+        this.players[i].health -= this.bullets[k].damage;
 
         // kill the bullet
         this.bullets.splice(k, 1);
-        if(server) {
+        if(this.server) {
           // send something special to clients ?
 
         }
+        break;
       }
     }
   }
@@ -151,7 +152,7 @@ Game.prototype.update = function(delta) {
   for(var i = this.bullets.length - 1; i >= 0; i--) {
     // console.log('Try to update bullet: ' + i);
     // updatePlayer(this.players[i], delta);
-    if(!updateBullet(this.bullet[i], delta)) { // dead bullet?
+    if(!updateBullet(this.bullets[i], delta)) { // dead bullet?
       if(!this.server) { // only spawn particles on the client
         // spawn particles
         for(var k = 0; k < 20; k++) { // 20 particles to make
