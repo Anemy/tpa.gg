@@ -22,7 +22,7 @@ const astroidMode = true;
 var Game = function(server, lobby, serverSendGameData, lobbyEndGame) {
   this.server = server;
 
-  // used by server so game can call to update clients
+  // methods used by server
   if(lobby) {
     this.lobby = lobby;
 
@@ -35,10 +35,10 @@ var Game = function(server, lobby, serverSendGameData, lobbyEndGame) {
 
   this.winner = -1;
 
-  // test player
-  // this.players.push(new Player(gameWidth/2,gameHeight/2));
-
   this.bullets = [];
+
+  // used at end game for coolness
+  this.slowTime = false;
 
   this.particles = [];
 
@@ -92,6 +92,10 @@ Game.prototype.gameLoop = function() {
   // inactive tab catch
   if(deltaTime > 0.25) {
     deltaTime = 0.25;
+  }
+
+  if(this.slowTime) {
+    deltaTime = deltaTime/4;
   }
 
   // if game hasn't started yet don't do any updates
@@ -187,7 +191,7 @@ Game.prototype.checkCollisions = function(delta) {
             // see how many players alive (end game if ya can!)
             var stillAlive = -1;
             for(var j = 0; j < this.players.length; j++) {
-              if(this.players[i].health > 0) {
+              if(this.players[j].health > 0) {
                 if(stillAlive >= 0) {
                   stillAlive = -2;
                   break;

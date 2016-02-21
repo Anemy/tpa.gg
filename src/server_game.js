@@ -121,7 +121,7 @@ var launchGame = function(lobby) {
 }
 
 var lobbyEndGame = function(lobby) {
-  var message = JSON.stringify({"event": "gameEnd", "body": {"winner": lobby.game.winner}});
+  var message = JSON.stringify({"event": "gameEnd", "body": lobby.game.winner});
 
   for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
     var clientId = Object.keys(lobby.clients)[i];

@@ -54,7 +54,7 @@ var serverEventHandlers = {
   gameEnd: function(body) {
 
     var resultString = "Uh... Tie?";
-    if(Number(body.winner) == localPlayerID) { 
+    if(Number(body) == localPlayerID) { 
       resultString = "Victory!!";
       if(Math.random()*100 < 7) {
         resultString = "Victory!! Nice one.";
@@ -100,24 +100,30 @@ var serverEventHandlers = {
       }
     }
 
-    // Game has ended, set up the background game
-    game = new Game(false);
-
-    localPlayerID = 0;
-
-    game.players.push(new Player(gameWidth/2, gameHeight/2));
-    game.countdownTimer = 0;
-
-    game = new Game();
+    game.slowTime = true;
 
     // console.log('try to join game');
-    document.title = 'Searching for game...';
+    document.title = resultString;
     $('.statusText').text(resultString);
+
+    setTimeout(function() {
+      $('.gameSearcher').fadeIn(500);
+      $('.statusText').fadeIn(500);
+
+      // give it that little wait before searching for the game
+      setTimeout( function() {
+        // Game has ended, set up the background game
+        game = new Game(false);
+
+        localPlayerID = 0;
+
+        game.players.push(new Player(gameWidth/2, gameHeight/2));
+        game.countdownTimer = 0;
+      }, 1000);
+    }, 500);
 
     setTimeout( function() {
       $('.statusText').text('Searching for a game...');
-      $('.gameSearcher').fadeIn(500);
-      $('.statusText').fadeIn(500);
       $('.waitAnimation').fadeIn(500);
 
       // give it that little wait before searching for the game
@@ -164,7 +170,7 @@ $(document).ready(function() {
     document.title = 'Searching for game...';
     $('.statusText').text('Searching for a game...');
 
-    $('.joinGame').fadeOut(500);
+    $('.joinGame').fadeOut(500, function(){$('.joinGame').css('display', 'none');});
 
     setTimeout(function() {
       $('.statusText').fadeIn(500);
