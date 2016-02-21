@@ -26,8 +26,8 @@ const astroidModeRotationSpeed = 200;
 const countdownTimerStart = 5; // in seconds
 
 // lobbies
-const maxPlayers = 2;
-const minPlayers = 2;
+const maxPlayers = 4;
+const minPlayers = 4;
 
 // bullet
 const bulletSpeed = 800;
