@@ -8,49 +8,50 @@ var localToken = null;
 var socket;
 var ping;
 var pingInterval;
+var game;
 
-// clientside running for now
-$(document).ready(function() {
-  // keep polling servers until we find an available one
-  // console.log('Connect to: ' + window.location.hostname + ":" + basePort);
-
-  socket = io();
-
-  // recieveing unique local token (currently unused...)
-  socket.on('token', function(token) {
-    localToken = token;
-  });
-
-  // start ping interval
-  pingInterval = setInterval(function() {
-    socket.send('p.' + (new Date().getTime()));
-  }, 1000);
-
-  // handle mesages from the server
-  socket.on('message', function (message) {
-    // console.log(message);
-    var messageParts = message.split('.');
-    var messageType = messageParts[0] || null;
-
-    if (messageType == "m") {
-      if(messageParts[1] == 'lobbyFound') {
-        // lobby has been found to play in
-        // console.log('Lobby found.');
-      }
-    }
-    else if (messageType == 'p') { // ping request
-      ping = (new Date().getTime()) - messageParts[1];
-      // console.log('My ping: ' + ping);
-    }
-  });
-
-  socket.on('game start', function(message) {
-    localPlayerID = message;
-
+var serverEventHandlers = {
+  lobbyFound: function(body){
+    console.log("lobby found: " + body);
+  },
+  ping: function(body){
+    console.log("ping " + body);
+    var t = new Date().getTime();
+    ping = t - Number(body);
+  },
+  gameStart: function(body){
+    localPlayerID = body;
     console.log('Let\'s start this game');
 
     game = new Game(false);
     game.initGame();
+  },
+  token: function(body){
+    localToken = body;
+  }
+}
+
+// clientside running for now
+$(document).ready(function() {
+  socket = io();
+
+  // start ping interval
+  pingInterval = setInterval(function() {
+    var t = new Date().getTime();
+    var message = JSON.stringify({'event': 'ping', 'body': t});
+    socket.send(message);
+  }, 1000);
+
+  // handle mesages from the server
+  socket.on('message', function (m) {
+
+    var message = JSON.parse(m);
+    if (message['event'] !== undefined
+        && serverEventHandlers[message['event']] !== undefined) {
+      var eventName = message['event'];
+      var eventBody = message['body'];
+      serverEventHandlers[eventName](eventBody);
+    }
   });
 
   // bind the game thing
@@ -63,7 +64,8 @@ $(document).ready(function() {
     console.log('try to join game');
 
     // try to join a game
-    socket.send("m.joinGame");
+    var message = JSON.stringify({'event': 'joinGame'});
+    socket.send(message);
   })
 });
 

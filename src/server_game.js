@@ -21,12 +21,32 @@ includeInThisContext(__dirname+"/assets/game/scripts/bullet.js");
 includeInThisContext(__dirname+"/assets/game/scripts/constants/index.js");
 
 
-var lobbies = [];
+var clientEventHandlers = {
+  input: function(body, client){
+    console.log("input");
+    if (client.inLobby && client.lobbyID){
+      console.log(body);
+    }
+  },
+  ping: function(body, client){
+    var message = {"event": "ping", "body": body};
+    client.send(JSON.stringify(message));
+  },
+  joinGame: function(body, client){
+    console.log("Client wants to join a game");
+    if (client.inLobby === false){
+      console.log("client isn't in lobby, joining now, lobbyID is " + client.lobbyId);
+      joinLobby(client);
+    }
+  }
+};
+
+var lobbies = {};
 
 // contains all of the client connections and things pertaining to the lobby
 var Lobby = function(lobbyID) {
-  this.pop = 0; // players in game
-  this.clients = [];
+  this.population = 0; // players in game
+  this.clients = {};
 
   // boolean says if game is going or not - don't let people join when it's going
   this.inProgress = false;
@@ -43,8 +63,12 @@ var launchGame = function(lobby) {
 
   lobby.inProgress = true;
 
-  for(var i = 0; i < lobby.clients.length; i++) { 
-    lobby.clients[i].emit('game start', i);
+  for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
+    var clientId = Object.keys(lobby.clients);
+    var client = lobby.clients[clientId];
+
+    var message = JSON.stringify({"event": "gameStart", "body": clientId});
+    client.send(message);
   }
 
   lobby.game.startGameLoop();
@@ -69,10 +93,12 @@ var serverSendGameData = function(lobby) {
   dataToSend.players = lobby.game.players;
   dataToSend.bullets = lobby.game.bullets;
 
-  var dataString = JSON.stringify(dataToSend);
+  var message = JSON.stringify({"event": "gameData", "body": dataToSend});
   // shoot the data to the clients
-  for(var i = 0; i < lobby.clients.length; i++) {
-    lobby.clients[i].emit('gameData', dataString);
+  for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
+    var clientId = Object.keys(lobby.clients);
+    var client = lobby.clients[clientId];
+    client.send(message);
   }
 }
 
@@ -82,17 +108,20 @@ var createNewLobby = function (client) {
   lobbies[lobbyID] = new Lobby(lobbyID);
   console.log('Lobby created: ' + lobbyID);
 
-  client.send('m.lobbyFound');
+  var message = JSON.stringify({'event': 'lobbyFound', 'body': lobbyID});
+  client.send(message);
+
   client.inLobby = true;
   client.lobbyID = lobbyID;
 
-  lobbies[lobbyID].pop++;
-  lobbies[lobbyID].clients.push(client);
+  lobbies[lobbyID].population++;
+  lobbies[lobbyID].clients[client.token] = client;
 }
 
 // searches for a game for the client, or makes one depending
 var joinLobby = function(client) {
 
+  console.log(Object.keys(lobbies));
   // need to find how to reference lobbies
   if(Object.keys(lobbies).length == 0) {
     // create new lobby
@@ -101,29 +130,24 @@ var joinLobby = function(client) {
   else {
     // try to join a preexisting lobby
 
-    for (var lobbyID in lobbies) {
-      // skip loop if the property is from prototype
-      if (!lobbies.hasOwnProperty(lobbyID)) { 
-        // console.log('In proto: ' + lobbyID);
-        continue;
-      }
+    for (var i = 0; i < Object.keys(lobbies); i++){
+      var lobbyId = Object.keys(lobbies)[i];
+      var lobby = lobbies[lobbyId];
+      console.log(lobby);
 
-      var lobby = lobbies[lobbyID];
-
-      if(lobby.pop < maxPlayers && !lobby.inProgress) { // max players from constants/index.js
+      if(lobby.population < maxPlayers && !lobby.inProgress) { // max players from constants/index.js
         // add player to lobby
         client.inLobby = true;
         client.lobbyID = lobbyID;
 
         // add the client to the game
-        lobby.pop++;
-        lobby.clients.push(client);
+        lobby.population++;
+        lobby.clients[client.token] = client;
 
-        // send the client the lobby ID and the 
-        client.send('m.lobbyFound');
+        client.send(JSON.stringify({'event': 'lobbyFound'}));
 
         // can the game start?
-        if(lobby.pop == minPlayers) {
+        if(lobby.population == minPlayers) {
           // start the game!
           launchGame(lobby);
         }
@@ -145,47 +169,30 @@ var server_start = function(server, port) {
     client.token = uuid.v4();
 
     // send the client a unique id (idk what to do with it yet LOL)
-    client.emit('token', client.token);
+    var message = {"event": "token", "body": client.token};
+    client.send(JSON.stringify(message));
 
     // handle message from client
-    client.on('message', function(message) {
-      // console.log("mesg: " + message);
-
-      if(message == null || message == undefined) {
+    client.on('message', function(m) {
+      if (m == null || m == undefined) {
         return;
       }
+      var message = JSON.parse(m);
 
-      var messageParts = message.split('.');
-      var messageType = messageParts[0] || null;
-
-      if (messageType == "i") {
-        // handle input
-        if(client.inLobby && client.lobbyID) {
-          if(lobbies[client.lobbyID] && ) {
-            lobbies[client.lobbyID].handleInput(messageParts[1]);
-          }
-        }
-      } 
-      else if (messageType == 'p') { // ping request
-        client.send('p.' + messageParts[1]);
-      } 
-      else if (messageType == 'm') {
-        var messageQuery = messageParts[1] || null;
-
-        // try to join a game if player is applicable
-        if(messageQuery == 'joinGame' && !client.inLobby) {
-          console.log('Client wants to join a game');
-          joinLobby(client);
-        }
+      if (message['event'] !== undefined
+          && clientEventHandlers[message['event']] !== undefined) {
+        var eventName = message['event'];
+        var eventBody = message['body'];
+        clientEventHandlers[eventName](eventBody, client);
       }
+
     });
 
     client.on('disconnect', function() {
       // tell the game to remove a player?
       if(client.inLobby) {
         // disconnect client from game
-        // lobby.pop--;
-        // lobby.clients.splice
+        // TODO
       }
     });
   });
