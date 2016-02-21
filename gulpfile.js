@@ -93,5 +93,5 @@ gulp.task( 'server:restart', function() {
 });
 
 gulp.task('watchall', ['js:watch', 'sass:watch', 'server:restart']);
-
+gulp.task('buildall', ['js', 'sass']);
 gulp.task('default', [ 'js', 'sass', 'server:start', 'watchall']);
