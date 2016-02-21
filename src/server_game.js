@@ -303,9 +303,9 @@ var server_start = function(server, port) {
               delete lobbies[client.lobbyId].game;
 
               // destroy the lobby
-              if(lobby) {
-                delete lobbies[lobby.lobbyId];
-              }
+              // if(lobby) {
+              //   delete lobbies[lobby.lobbyId];
+              // }
 
               delete lobbies[client.lobbyId];
             }

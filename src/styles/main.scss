@@ -10,6 +10,9 @@ body {
   text-align: center;
 
   -webkit-font-smoothing: antialiased;
+
+  height:100%; 
+  overflow:hidden; 
 }
 
 .background .far{
@@ -106,6 +109,13 @@ body {
   left: 0;
   right: 0;
   top: .25em;
+
+  transition: all 0.4s;
+}
+.topTPATitle:hover {
+  opacity: 0.7;
+
+  cursor: pointer;
 }
 
 .gameSearcher {
@@ -174,7 +184,7 @@ body {
     width: 7em;
 
     margin: auto;
-    margin-top: 154px;
+    margin-top: 134px;
     // margin-top: 80px;
 
     transition: all 0.4s;

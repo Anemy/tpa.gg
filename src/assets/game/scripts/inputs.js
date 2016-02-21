@@ -19,6 +19,7 @@ var handleKeydown = function (e) {
 
   switch(keyCode) {
     case keyCodes.space:
+      e.preventDefault();
       game.players[localPlayerID].shoot = true;
       break;
     case keyCodes.up:
@@ -51,6 +52,7 @@ var handleKeyup = function (e) {
 
   switch(keyCode) {
     case keyCodes.space:
+      e.preventDefault();
       game.players[localPlayerID].shoot = false;
       break;
     case keyCodes.up:

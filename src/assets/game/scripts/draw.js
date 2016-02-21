@@ -207,7 +207,6 @@ var render_player = function(player) {
   ctx.stroke();
   ctx.closePath();
 
-
   ctx.fillStyle = '#111111';
 
   // drawing gun VV

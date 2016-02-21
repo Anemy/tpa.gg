@@ -8,10 +8,10 @@ This file contains the starting functions of the game and the base game loop log
 var canvas;
 var ctx;
 
-const astroidMode = false;
+var astroidMode = false;
 
 // param: server - true/false - true means it's the server
-var Game = function(server, lobby, serverSendGameData, lobbyEndGame) {
+var Game = function(server, lobby, serverSendGameData, lobbyEndGame, astroidMode) {
   this.server = server;
 
   // methods used by server
@@ -21,6 +21,10 @@ var Game = function(server, lobby, serverSendGameData, lobbyEndGame) {
     this.serverSendGameData = serverSendGameData;
     this.lobbyEndGame = lobbyEndGame;
   }
+
+  // if(astroidMode) {
+  //   this.astroidMode = ;
+  // }
 
   // array of Player objects (player.js)
   this.players = [];
@@ -152,6 +156,9 @@ Game.prototype.clientParseGameData = function(data) {
 
         this.players[i] = data.players[i];
 
+        this.players[i].mouseX = mouseX;
+        this.players[i].mouseY = mouseY;
+
         // for self, give closer to local calculations because lags
         this.players[i].x = this.lerp(100 * (ping / 120), x, data.players[i].x);
         this.players[i].y = this.lerp(100 * (ping / 120), y, data.players[i].y);
@@ -276,7 +283,7 @@ Game.prototype.update = function(delta) {
 
       if(!this.server) {
         // particle effect when shooting
-        for(var j = 0; j < 2; j++) {
+        for(var j = 0; j < 4; j++) {
           var colorToBe = 'rgba(' + 40 + ',' + 40 + ',' + 40; // THE END ) NOT ADDED BECause ALPHA ADDED
           this.particles.push(new Particle(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), Math.cos(shootAngle)*100 * (Math.random()+1), Math.sin(shootAngle)*100 * (Math.random()+1), colorToBe, 1));
         }

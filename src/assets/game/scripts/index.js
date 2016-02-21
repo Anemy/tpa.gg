@@ -126,9 +126,9 @@ var serverEventHandlers = {
     $('.statusText').text(resultString);
 
     setTimeout(function() {
-      $('.gameSearcher').fadeIn(500);
-      $('.statusText').fadeIn(500);
-      $('.waitAnimation').fadeIn(500);
+      $('.gameSearcher').fadeIn(1000);
+      $('.statusText').fadeIn(1000);
+      $('.waitAnimation').fadeIn(1000);
 
       document.title = 'tpa.gg';
 
@@ -145,7 +145,7 @@ var serverEventHandlers = {
         game.players.push(new Player(gameWidth/2, gameHeight/2));
         game.countdownTimer = 0;
       }, 4000);
-    }, 2000);
+    }, 1500);
 
     setTimeout( function() {
       $('.statusText').text('Searching for a game...');
