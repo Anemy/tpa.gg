@@ -125,8 +125,6 @@ Game.prototype.clientParseGameData = function(data) {
     timeSinceMessageSent = 0;
   }
 
-  // console.log('Time since last message: ' + timeSinceMessageSent);
-
   if(data.countdownTimer > 0) {
     this.countdownTimer = data.countdownTimer - (timeSinceMessageSent/1000); // countdown timer in s
   }
@@ -155,10 +153,10 @@ Game.prototype.clientParseGameData = function(data) {
     }
   }
   this.bullets = data.bullets;
-  for(var i = 0; i < this.bullets; i++) {
-    this.bullets[i].x += bullets[i].xDir;
-    this.bullets[i].y += bullets[i].yDir;
-  }
+  // for(var i = 0; i < this.bullets; i++) {
+  //   this.bullets[i].x += (this.countdownTimer/1000) * bullets[i].xDir;
+  //   this.bullets[i].y += (this.countdownTimer/1000) * bullets[i].yDir;
+  // }
 
   // console.log('We got data baby! ' + data);
 }

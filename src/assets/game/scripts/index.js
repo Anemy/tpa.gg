@@ -15,6 +15,7 @@ var clientId = 0;
 var serverEventHandlers = {
   lobbyFound: function(body){
     // console.log("lobby found: " + body);
+    document.title = 'Lobby found!';
   },
   ping: function(body){
     // console.log("ping " + body);
@@ -23,10 +24,16 @@ var serverEventHandlers = {
   },
   gameStart: function(body){
     clientId = body.clientId;
-    localPlayerID = body.inGameNumber;
+    
     // console.log('Let\'s start this game');
+    document.title = 'GAME FOUND!';
+    $('.gameSearcher').fadeOut(500);
+    setTimeout(function(){document.title = 'GAME STARTING!!!!'},2000);
+    setTimeout(function(){document.title = 'GO GO GO!!!!'},4000);
+    setTimeout(function(){document.title = 'tpa'},6000);
 
     game = new Game(false);
+    localPlayerID = body.inGameNumber;
     game.initGame();
   },
   token: function(body){
@@ -39,6 +46,11 @@ var serverEventHandlers = {
 
 // clientside running for now
 $(document).ready(function() {
+
+  game = new Game(false);
+  game.players.push(new Player(gameWidth/2, gameHeight/2));
+  game.initGame();
+
   socket = io();
 
   // start ping interval
@@ -61,7 +73,8 @@ $(document).ready(function() {
   });
   // find a game
   $('.joinGame').on('click', function() {
-    console.log('try to join game');
+    // console.log('try to join game');
+    document.title = 'Searching for game...';
 
     // try to join a game
     var message = JSON.stringify({'event': 'joinGame'});

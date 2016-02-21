@@ -12,14 +12,14 @@ const gameWidth = 2400;
 const gameHeight = 1800;
 
 // player
-const playerRadius = 20;
+const playerRadius = 24;
 const playerGunSize = 10;
 const playerJump = -300;
 const playerAcceleration = 450;
 const playerHealth = 100;
-const maxPlayerSpeed = 450; // IDK WHAT THIS SHOULD BE
+const maxPlayerSpeed = 400; // IDK WHAT THIS SHOULD BE
 const shootRate = 500;
-const friction = 70;
+const friction = 60;
 const astroidModeRotationSpeed = 10;
 
 // countdown time before a game starts

@@ -1,15 +1,16 @@
-<div class="background">
-  <div class="far"/>
-  <div class="dots"/>
-</div>
-
 <noscript>
   alert("Please enable javascript to play this game.");
 </noscript>
 
-<div class="gameFrame">
-  <canvas id="canvas" width="1000" height="800"></canvas>
-  {{!-- <div class="messageText">Loading...</div> --}}
+<div class="background">
+  <div class="far"></div>
+  <div class="dots"></div>
 </div>
 
-<div class="joinGame">Find a Game</div>
+<div class="game-container">
+  <canvas id="canvas" width="1000" height="800"></canvas>
+  <div class="gameSearcher">
+    <div class="moreDots"></div>
+    <div class="joinGame">Find a Game</div>
+  </div>
+</div>

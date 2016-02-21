@@ -15,12 +15,12 @@ var Particle = function(xPos, yPos, xDir, yDir, color) {
 
   this.life = 100;
 
-  this.radius = 2; // its actually width and height
+  this.radius = 3; // its actually width and height
 
   // return false if it should DIE!
   this.update = function(delta) {
 
-    this.life -= delta*50;
+    this.life -= delta*40;
 
     // Check borders of map
     if(this.xDir < 0 && this.x - this.radius + this.xDir*delta < 0) {

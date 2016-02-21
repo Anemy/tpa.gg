@@ -101,7 +101,7 @@ var drawCountDownTimer = function() {
 var render_map = function(delta) {
 
   // around the border
-  ctx.fillStyle = 'rgb(' + (150 - Math.floor(gridGlow/4)) + ',' + (150 - Math.floor(gridGlow/4)) + ',' + (255- Math.floor(gridGlow/4)) + ')';
+  ctx.fillStyle = 'rgb(' + (120 - Math.floor(gridGlow/4)) + ',' + (120 - Math.floor(gridGlow/4)) + ',' + (180- Math.floor(gridGlow/4)) + ')';
   ctx.fillRect(-width/2, -height/2, gameWidth + width, height/2); // top
   ctx.fillRect(-width/2, -height/2, width/2, gameHeight + height); // left
   ctx.fillRect(gameWidth, -height/2, width/2, gameHeight + height); // right
@@ -116,10 +116,10 @@ var render_map = function(delta) {
 
   // glowing grid updating
   if(gridGlowUp) {
-    gridGlow += 70 * delta;
+    gridGlow += 50 * delta;
   }
   else {
-    gridGlow -= 70 * delta;
+    gridGlow -= 50 * delta;
   }
   if(gridGlowUp && gridGlow > 200) {
     gridGlowUp = false;
@@ -163,7 +163,7 @@ var render_player = function(player) {
   ctx.clip(); // Make a clipping region out of this path
   // instead of filling the arc, we fill a variable-sized rectangle
   // that is clipped to the arc
-  ctx.fillStyle = '#52EDB7';
+  ctx.fillStyle = '#5DAE8B'; //52EDB7 // 4CD964
   // We want the rectangle to get progressively taller starting from the bottom
   // There are two ways to do this:
   // 1. Change the Y value and height every time
