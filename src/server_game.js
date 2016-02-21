@@ -270,6 +270,14 @@ var server_start = function(server, port) {
         if(client.lobbyId && lobbies[client.lobbyId]) {
           // client is in a lobby, remove them from the clients, and update the lobby if it's not in game yet
           if(lobbies[client.lobbyId].inProgress) {
+
+            // kill their in game player // decided not to because of how we trigger game over
+            // if(lobbies[client.lobbyId].game) {
+            //   if(lobbies[client.lobbyId].game.players && client.inGameNumber && lobbies[client.lobbyId].game.players[client.inGameNumber]) {
+            //     lobbies[client.lobbyId].game.players[client.inGameNumber].health = -20;
+            //   }
+            // }
+
             // a game is in process
             delete lobbies[client.lobbyId].clients[client.clientId];
             

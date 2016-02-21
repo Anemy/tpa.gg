@@ -16,7 +16,7 @@ const playerRadius = 30;
 const playerGunSize = 10;
 const playerJump = -300;
 const playerAcceleration = 450;
-const playerHealth = 100;
+const playerHealth = 150;
 const maxPlayerSpeed = 450; // IDK WHAT THIS SHOULD BE
 const shootRate = 500;
 const friction = 60;
@@ -26,8 +26,8 @@ const astroidModeRotationSpeed = 200;
 const countdownTimerStart = 5; // in seconds
 
 // lobbies
-const maxPlayers = 2;
-const minPlayers = 2;
+const maxPlayers = 4;
+const minPlayers = 4;
 
 // bullet
 const bulletSpeed = 800;

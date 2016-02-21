@@ -4,7 +4,7 @@ This is the bullet. It gets shot.
 
 */
 
-var Particle = function(xPos, yPos, xDir, yDir, color) {
+var Particle = function(xPos, yPos, xDir, yDir, color, optionalSize) {
   this.x = xPos;
   this.y = yPos;
 
@@ -16,6 +16,10 @@ var Particle = function(xPos, yPos, xDir, yDir, color) {
   this.life = 100;
 
   this.radius = 1 + Math.floor(Math.random()*4); // its actually width and height
+
+  if(optionalSize) {
+    this.radius = optionalSize;
+  }
 
   // return false if it should DIE!
   this.update = function(delta) {

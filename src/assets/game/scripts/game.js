@@ -267,13 +267,38 @@ Game.prototype.update = function(delta) {
 
       var shootAngle;
       // shoot a new bullet
-      if(!astroidMode) {
+      if (!astroidMode) {
         shootAngle = Math.atan2(this.players[i].mouseY, this.players[i].mouseX);
       }
       else {
         shootAngle = this.players[i].rotation * (Math.PI/180);
       }
-      this.bullets.push(new Bullet(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), bulletSpeed*Math.cos(shootAngle), bulletSpeed*Math.sin(shootAngle), shootAngle, i));
+
+      if(!this.server) {
+        // particle effect when shooting
+        for(var j = 0; j < 2; j++) {
+          var colorToBe = 'rgba(' + 40 + ',' + 40 + ',' + 40; // THE END ) NOT ADDED BECause ALPHA ADDED
+          this.particles.push(new Particle(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), Math.cos(shootAngle)*100 * (Math.random()+1), Math.sin(shootAngle)*100 * (Math.random()+1), colorToBe, 1));
+        }
+      }
+
+      // shoot bullets based on level (multiple shots)
+      if (this.players[i].level == 1) {
+        this.bullets.push(new Bullet(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), bulletSpeed*Math.cos(shootAngle), bulletSpeed*Math.sin(shootAngle), shootAngle, i));
+      }
+      else if (this.players[i].level == 2) {
+        shootAngle -= Math.PI/180;
+        this.bullets.push(new Bullet(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), bulletSpeed*Math.cos(shootAngle), bulletSpeed*Math.sin(shootAngle), shootAngle, i));
+        shootAngle += (2*Math.PI)/180;
+        this.bullets.push(new Bullet(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), bulletSpeed*Math.cos(shootAngle), bulletSpeed*Math.sin(shootAngle), shootAngle, i));
+      }
+      else {
+        this.bullets.push(new Bullet(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), bulletSpeed*Math.cos(shootAngle), bulletSpeed*Math.sin(shootAngle), shootAngle, i));
+        shootAngle -= (2*Math.PI)/180;
+        this.bullets.push(new Bullet(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), bulletSpeed*Math.cos(shootAngle), bulletSpeed*Math.sin(shootAngle), shootAngle, i));
+        shootAngle += (4*Math.PI)/180;
+        this.bullets.push(new Bullet(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), bulletSpeed*Math.cos(shootAngle), bulletSpeed*Math.sin(shootAngle), shootAngle, i));
+      }
     }
   }
 
