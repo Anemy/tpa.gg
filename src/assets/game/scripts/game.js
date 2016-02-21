@@ -19,7 +19,7 @@ var game; // game is a Game object
 const astroidMode = false;
 
 // param: server - true/false - true means it's the server
-var Game = function(server, lobby, serverSendGameData) {
+var Game = function(server, lobby, serverSendGameData, a) {
   this.server = server;
 
   // used by server so game can call to update clients
@@ -58,10 +58,13 @@ Game.prototype.initGame = function() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
 
+  // add window key + mouse controls
   window.addEventListener('keyup', handleKeyup , false);
   window.addEventListener('keydown', handleKeydown , false);
 
   window.addEventListener('mousemove', mouseMove, false);
+  window.addEventListener("mousedown", mouseDown, false);
+  window.addEventListener("mouseup", mouseUp, false);
 
   canvas.width = width;
   canvas.height = height;
@@ -171,13 +174,41 @@ Game.prototype.checkCollisions = function(delta) {
         // hurt the playa
         this.players[i].health -= this.bullets[k].damage;
 
+        // time to die!?
+        if(this.players[i].health <= 0) {
+          if(!this.server) {
+            for(var j = 0; j < 40; j++) {
+              var colorToBe = 'rgba(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*50) + ',' + Math.floor(Math.random()*50); // THE END ) NOT ADDED BECause ALPHA ADDED
+              this.particles.push(new Particle(this.players[i].x + returnNeg(Math.random()*this.players[i].radius), this.players[i].y + returnNeg(Math.random()*this.players[i].radius), returnNeg(Math.random()*600), returnNeg(Math.random()*600), colorToBe));
+            }
+          }
+          else { // server
+            // see how many players alive (end game if ya can!)
+            var stillAlive = -1;
+            for(var j = 0; j < this.players.length; j++) {
+              if(this.players[i].health > 0) {
+                if(stillAlive >= 0) {
+                  stillAlive = -2;
+                  break;
+                }
+                stillAlive = j;
+              }
+            }
+
+            // end game if ya can
+            if(stillAlive >= 0) {
+              endGame();
+            }
+          }
+        }
+
         if(this.server) {
           // send something special to clients ?
-          // maybe blood spawning if it doesn't work out
+          // maybe send blood spawning if it doesn't work out
         }
         else {
           // only spawn particles on the client // blood
-          for(var j = 0; j < 20; j++) { // 20 particles to make
+          for(var j = 0; j < 30; j++) { // brainzzzzz
             var colorToBe = 'rgba(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*50) + ',' + Math.floor(Math.random()*50); // THE END ) NOT ADDED BECause ALPHA ADDED
             this.particles.push(new Particle(this.bullets[k].x, this.bullets[k].y, returnNeg(Math.random()*200), returnNeg(Math.random()*200), colorToBe));
           }
@@ -201,7 +232,7 @@ Game.prototype.update = function(delta) {
     if(!updateBullet(this.bullets[i], delta)) { // dead bullet?
       if(!this.server) { // only spawn particles on the client
         // spawn particles
-        for(var k = 0; k < 30; k++) { // 20 particles to make
+        for(var k = 0; k < 32; k++) { // 20 particles to make
           var colorToBe = 'rgba(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255); // THE END ) NOT ADDED BECause ALPHA ADDED
           this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, returnNeg(Math.random()*200), returnNeg(Math.random()*200), colorToBe));
         }

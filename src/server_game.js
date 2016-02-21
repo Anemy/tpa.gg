@@ -116,6 +116,10 @@ var launchGame = function(lobby) {
   lobby.game.startGameLoop();
 }
 
+var lobbyEndGame = function() {
+
+}
+
 // sends all of the game data of the indicated lobby from the server
 var serverSendGameData = function(lobby) {
   // gameLoop
@@ -142,9 +146,9 @@ var createNewLobby = function (client) {
   // create a new lobby
   var lobbyId = uuid.v4()
   lobbies[lobbyId] = new Lobby(lobbyId);
-  console.log('Lobby created: ' + lobbyId);
+  // console.log('Lobby created: ' + lobbyId);
 
-  var message = JSON.stringify({'event': 'lobbyFound', 'body': lobbyId});
+  message = JSON.stringify({'event': 'lobbyFound', 'body': 1});
   client.send(message);
 
   client.inLobby = true;
@@ -180,12 +184,19 @@ var joinLobby = function(client) {
         lobby.population++;
         lobby.clients[client.token] = client;
 
-        client.send(JSON.stringify({'event': 'lobbyFound'}));
+        client.send(JSON.stringify({'event': 'lobbyFound', 'body': lobby.population}));
 
         // can the game start?
         if(lobby.population == minPlayers) {
           // start the game!
           launchGame(lobby);
+        }
+        else {
+          for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
+            var clientId = Object.keys(lobby.clients)[i];
+            var client = lobby.clients[clientId];
+            client.send(message);
+          }
         }
         return;
       }

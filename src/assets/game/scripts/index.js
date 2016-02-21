@@ -10,11 +10,14 @@ var ping;
 var pingInterval;
 var game;
 
+var inGame = false;
+
 var clientId = 0;
 
 var serverEventHandlers = {
   lobbyFound: function(body){
     // console.log("lobby found: " + body);
+    $('.statusText').text('Lobby Found: ' + body + '/' + minPlayers + ' Players');
     document.title = 'Lobby found!';
   },
   ping: function(body){
@@ -25,16 +28,22 @@ var serverEventHandlers = {
   gameStart: function(body){
     clientId = body.clientId;
     
+    inGame = true;
+
+    $('.statusText').text('Game starting!');
+
     // console.log('Let\'s start this game');
     document.title = 'GAME FOUND!';
     $('.gameSearcher').fadeOut(500);
+    $('.statusText').fadeOut(500);
+    $('.waitAnimation').fadeOut(500);
     setTimeout(function(){document.title = 'GAME STARTING!!!!'},2000);
     setTimeout(function(){document.title = 'GO GO GO!!!!'},4000);
     setTimeout(function(){document.title = 'tpa'},6000);
 
     game = new Game(false);
     localPlayerID = body.inGameNumber;
-    game.initGame();
+    game.startGameLoop();
   },
   token: function(body){
     localToken = body;
@@ -49,6 +58,7 @@ $(document).ready(function() {
 
   game = new Game(false);
   game.players.push(new Player(gameWidth/2, gameHeight/2));
+  game.countdownTimer = 0;
   game.initGame();
 
   socket = io();
@@ -75,10 +85,21 @@ $(document).ready(function() {
   $('.joinGame').on('click', function() {
     // console.log('try to join game');
     document.title = 'Searching for game...';
+    $('.statusText').text('Searching for a game...');
 
-    // try to join a game
-    var message = JSON.stringify({'event': 'joinGame'});
-    socket.send(message);
+    $('.joinGame').fadeOut(500);
+
+    setTimeout(function() {
+      $('.statusText').fadeIn(500);
+      $('.waitAnimation').fadeIn(500);
+    }, 1000);
+
+    // give it that little wait before searching for the game
+    setTimeout( function() {
+      // try to join a game
+      var message = JSON.stringify({'event': 'joinGame'});
+      socket.send(message);
+    }, 2000);
   })
 });
 

@@ -15,7 +15,7 @@ var Particle = function(xPos, yPos, xDir, yDir, color) {
 
   this.life = 100;
 
-  this.radius = 3; // its actually width and height
+  this.radius = 1 + Math.floor(Math.random()*4); // its actually width and height
 
   // return false if it should DIE!
   this.update = function(delta) {

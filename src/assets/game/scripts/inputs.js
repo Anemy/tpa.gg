@@ -11,7 +11,7 @@ var lastKeyDown = -1;
 var handleKeydown = function (e) {
   var keyCode = e.keyCode;
 
-  if(lastKeyDown != keyCode) {
+  if(inGame && lastKeyDown != keyCode) {
     var message = JSON.stringify({'event': 'input', 'body': {'keyCode': keyCode, 'keyType': 'd'}});
     socket.send(message);
   }
@@ -44,8 +44,10 @@ var handleKeyup = function (e) {
   var keyCode = e.keyCode;
 
   lastKeyDown = -1;
-  var message = JSON.stringify({'event': 'input', 'body': {'keyCode': keyCode, 'keyType': 'u'}});
-  socket.send(message);
+  if(inGame) {
+    var message = JSON.stringify({'event': 'input', 'body': {'keyCode': keyCode, 'keyType': 'u'}});
+    socket.send(message);
+  }
 
   switch(keyCode) {
     case keyCodes.space:
@@ -70,6 +72,20 @@ var handleKeyup = function (e) {
   }
 }
 
+var mouseDown = function(e) {
+  if(lastKeyDown != 'm') {
+    // shoot when clicked
+    var message = JSON.stringify({'event': 'input', 'body': {'keyCode': keyCodes.space, 'keyType': 'd'}});
+    socket.send(message);
+    lastKeyDown = 'm';
+  }
+}
+var mouseUp = function(e) {
+  // stop shooting
+  var message = JSON.stringify({'event': 'input', 'body': {'keyCode': keyCodes.space, 'keyType': 'u'}});
+  socket.send(message);
+  lastKeyDown = -1;
+}
 
 // alters local player's target
 var mouseMove = function(e) {
@@ -105,6 +121,8 @@ var mouseMove = function(e) {
     game.players[localPlayerID].mouseY -= height/2;
   }
 
-  var message = JSON.stringify({'event': 'input', 'body': {'x': game.players[localPlayerID].mouseX, 'y': game.players[localPlayerID].mouseY, 'keyType': 'm'}});
-  socket.send(message);
+  if(inGame) {
+    var message = JSON.stringify({'event': 'input', 'body': {'x': game.players[localPlayerID].mouseX, 'y': game.players[localPlayerID].mouseY, 'keyType': 'm'}});
+    socket.send(message);
+  }
 }
