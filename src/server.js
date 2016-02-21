@@ -2,8 +2,11 @@ require('dotenv').config({
   path: '../.env',
   silent: true
 });
+
 // TODO figure out better way to do this if needed
-process.chdir('./dist');
+if (process.env.NODE_ENV !== 'production') {
+  process.chdir('./dist');
+}
 
 const portNum = (process.env.PORT || 8080);
 
