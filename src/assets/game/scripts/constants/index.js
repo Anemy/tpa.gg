@@ -5,8 +5,8 @@ This contains all of the constants used in the game
 */
 
 
-const width = 1000;
-const height = 800;
+var width = 1000;
+var height = 800;
 
 const gameWidth = 2000;
 const gameHeight = 1600;

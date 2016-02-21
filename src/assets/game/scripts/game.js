@@ -176,6 +176,9 @@ Game.prototype.checkCollisions = function(delta) {
 
         // time to die!?
         if(this.players[i].health <= 0) {
+          // give the level to the killer
+          this.players[this.bullets[k].owner].level++;
+
           if(!this.server) {
             for(var j = 0; j < 40; j++) {
               var colorToBe = 'rgba(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*50) + ',' + Math.floor(Math.random()*50); // THE END ) NOT ADDED BECause ALPHA ADDED
@@ -198,6 +201,9 @@ Game.prototype.checkCollisions = function(delta) {
             // end game if ya can (server)
             if(stillAlive >= -1) { // only one or nobody is alive
               this.winner = stillAlive;
+              // end the interval
+              clearInterval(this.gameLoopInterval);
+              // end the game
               this.lobbyEndGame(this.lobby);
             }
           }

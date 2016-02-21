@@ -62,18 +62,66 @@ body {
   left: 0;
 }
 
-
 .playerCount {
   position: absolute;
 
   font-family: 'Oswald', sans-serif;
 
-  font-size: 14px;
+  font-size: 16px;
 
   color: #F7F7F7;
 
   right: 10px;
-  top: 10px;
+  top: 6px;
+}
+
+.stats {
+  position: absolute;
+
+  left: 8px;
+
+  color: #F7F7F7;
+
+  font-family: 'Oswald', sans-serif;
+
+  font-size: 16px;
+
+  top: 6px;
+}
+.losses {
+  top: 28px;
+}
+
+.bottomTPATitle {
+  // margin: 0 auto;
+
+  // color: #F2F2F2;
+
+  // // font-family: 'Oswald', sans-serif;
+
+  // font-size: 100px;
+
+  // opacity: 0.2;
+
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+
+  // background-image: url("../img/tpa.png");
+}
+
+.tpaImage {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  top: 300px;
+
+  opacity: 0.4;
 }
 
 .gameSearcher {
@@ -85,8 +133,9 @@ body {
   width: 600px;
   top: 200px;
   left: 200px;
-  // height: 800px;
-  // width: 1000px;
+  
+  margin: 0 auto;
+
 
   border: 1px solid #fff;
   border-radius: 3px;
@@ -100,39 +149,38 @@ body {
   background-image: -o-radial-gradient(circle,#584860,#1f1d20);
   background-repeat: no-repeat;
 
-  // .moreDots {
-  //   position: relative;
+  .tpaTitle {
+    margin: auto;
 
-  //   background-image: url("../img/background.png");
-  //   background-repeat: repeat;
-  //   background-position: center;
-  //   background-attachment: fixed;
+    color: #F2F2F2;
 
-  //   left: 0;
-  //   right: 0;
-  //   top: 0;
-  //   bottom: 0;
-  // }
+    text-decoration: underline;
+    text-shadow: none;
+
+    font-size: 60px;
+  }
 
   .statusText {
     display:none;
 
     margin: auto;
-    margin-top: 80px;
+    margin-top: 34px;
+    // margin-top: 20px;
 
     color: #F2F2F2;
 
     text-decoration: none;
     text-shadow: none;
 
-    font-size: 22px;
+    font-size: 26px;
   }
 
   .joinGame {
     width: 7em;
 
     margin: auto;
-    margin-top: 166px;
+    margin-top: 154px;
+    // margin-top: 80px;
 
     transition: all 0.4s;
 
@@ -151,7 +199,7 @@ body {
     text-shadow: none;
     color: #333;
     background-color: #fff;
-    font-size: 22px;
+    font-size: 26px;
   }
   .joinGame:hover {
     cursor: pointer;

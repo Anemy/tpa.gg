@@ -35,6 +35,8 @@ var Player = function (x, y) {
 }
 // handles the updating of the player
 updatePlayer = function(player, delta) {
+  // console.log('Player speed: ' + this.xDir);
+
   // when this hits 0 the player can shoot again
   if(player.shootCounter > 0) {
     player.shootCounter -= delta*1000;

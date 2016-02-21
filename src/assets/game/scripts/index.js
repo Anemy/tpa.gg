@@ -2,6 +2,12 @@
 
 This starts up game.js for the local client
 
+and handles the socket io commands with the server
+
+and handles the local storage of 
+
+and state changing into and out of game
+
 */
 
 var localToken = null;
@@ -17,25 +23,25 @@ var clientId = 0;
 // for client player controls
 var localPlayerID = 0;
 
-var usersOnline = 1;
+var usersOnline = -1;
 
 var serverEventHandlers = {
-  lobbyFound: function(body){
+  lobbyFound: function(body) {
     // console.log("lobby found: " + body);
     $('.statusText').text('Lobby Found: ' + body + '/' + minPlayers + ' Players');
     document.title = body + '/' + minPlayers + ' Waiting...';
   },
-  ping: function(body){
+  ping: function(body) {
     if(body.usersOnline != usersOnline) {
       usersOnline = body.usersOnline;
-      $('.playerCount').text(usersOnline);
+      $('.playerCount').text("Players Online: " + usersOnline);
     }
 
     // console.log("ping " + body);
     var t = new Date().getTime();
     ping = t - Number(body.ping);
   },
-  gameStart: function(body){
+  gameStart: function(body) {
     clientId = body.clientId;
     
     inGame = true;
@@ -56,7 +62,7 @@ var serverEventHandlers = {
     localPlayerID = body.inGameNumber;
     game.startGameLoop();
   },
-  token: function(body){
+  token: function(body) {
     localToken = body;
   },
   gameData: function(body) {
@@ -66,6 +72,10 @@ var serverEventHandlers = {
 
     var resultString = "Uh... Tie?";
     if(Number(body) == localPlayerID) { 
+      localStorage.setItem("tpa_victory", Number(localStorage.getItem("tpa_victory")) + 1);
+
+      $('.wins').text('Wins: ' + localStorage.getItem("tpa_victory"));
+      
       resultString = "Victory!!";
       if(Math.random()*100 < 7) {
         resultString = "Victory!! Nice one.";
@@ -90,6 +100,10 @@ var serverEventHandlers = {
       }
     }
     else if(Number(body) >= 0) {
+      localStorage.setItem("tpa_defeat", Number(localStorage.getItem("tpa_defeat")) + 1);
+
+      $('.losses').text('Losses: ' + localStorage.getItem("tpa_defeat"));
+
       resultString = "Defeat.";
       if(Math.random()*100 < 7) {
         resultString = "Better luck next time.";
@@ -146,10 +160,23 @@ var serverEventHandlers = {
 // clientside running for now
 $(document).ready(function() {
 
-  game = new Game(false);
-  game.players.push(new Player(gameWidth/2, gameHeight/2));
-  game.countdownTimer = 0;
-  game.initGame();
+  // if they have a small window, give them the resize
+  if(window.innerHeight > 600 && window.innerHeight < 900) {
+    width = 800;
+    height = 600;
+
+    // 400 x 600
+    $('.gameSearcher').css('top', '100px');
+    $('.gameSearcher').css('left', '100px');
+  }
+
+  if(!localStorage.getItem("tpa_defeat")) {
+    localStorage.setItem("tpa_defeat", 0);
+    localStorage.setItem("tpa_victory", 0);
+  }
+
+  $('.wins').text('Wins: ' + localStorage.getItem("tpa_victory"));
+  $('.losses').text('Losses: ' + localStorage.getItem("tpa_defeat"));
 
   socket = io();
 
@@ -190,7 +217,12 @@ $(document).ready(function() {
       var message = JSON.stringify({'event': 'joinGame'});
       socket.send(message);
     }, 2000);
-  })
+  });
+
+  game = new Game(false);
+  game.players.push(new Player(gameWidth/2, gameHeight/2));
+  game.countdownTimer = 0;
+  game.initGame();
 });
 
 

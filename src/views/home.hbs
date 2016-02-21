@@ -1,3 +1,5 @@
+{{!-- <div class="bottomTPATitle">tpa</div> --}}
+
 <noscript>
   alert("Please enable javascript to play this game.");
 </noscript>
@@ -7,14 +9,20 @@
   <div class="dots"></div>
 </div>
 
-<div class="playerCount">?</div>
+<div class="playerCount">Loading...</div>
+<div class="wins stats">Wins: ?</div>
+<div class="losses stats">Losses: ?</div>
 
 <div class="game-container">
   <canvas id="canvas" width="1000" height="800"></canvas>
   <div class="gameSearcher">
+    {{!-- <div class="tpaTitle">TPA</div> --}}
     <div class="waitAnimation"></div>
-    <div class="statusText">blarg</div>
+    <div class="statusText">Play a game :)</div>
 
     <div class="joinGame">Find a Game</div>
   </div>
 </div>
+
+{{!-- <img class="tpaImage" src="../assets/img/tpa.png"> --}}
+{{!-- <div class="bottomTPATitle">tpa</div> --}}

@@ -134,8 +134,7 @@ var lobbyEndGame = function(lobby) {
     }
   }
 
-  if(lobbies[lobby.lobbyId].game) {
-    clearInterval(lobbies[lobby.lobbyId].game.gameLoopInterval);
+  if(lobbies[lobby.lobbyId] && lobbies[lobby.lobbyId].game) {
     delete lobbies[lobby.lobbyId].game;
   }
 
@@ -171,7 +170,7 @@ var createNewLobby = function (client) {
   // create a new lobby
   var lobbyId = uuid.v4()
   lobbies[lobbyId] = new Lobby(lobbyId);
-  console.log('New lobby created: ' + lobbyId);
+  // console.log('New lobby created: ' + lobbyId);
 
   message = JSON.stringify({'event': 'lobbyFound', 'body': 1});
   client.send(message);
@@ -201,7 +200,7 @@ var joinLobby = function(client) {
 
       if(lobby.population < maxPlayers && !lobby.inProgress) { // max players from constants/index.js
 
-        console.log('Open lobby found: ' + lobbyId);
+        // console.log('Open lobby found: ' + lobbyId);
 
         // add player to lobby
         client.inLobby = true;
@@ -283,7 +282,9 @@ var server_start = function(server, port) {
               delete lobbies[client.lobbyId].game;
 
               // destroy the lobby
-              delete lobbies[lobby.lobbyId];
+              if(lobby) {
+                delete lobbies[lobby.lobbyId];
+              }
 
               delete lobbies[client.lobbyId];
             }

@@ -105,7 +105,7 @@ var drawCountDownTimer = function() {
 var render_map = function(delta) {
 
   // around the border
-  ctx.fillStyle = 'rgb(' + (120 - Math.floor(gridGlow/4)) + ',' + (120 - Math.floor(gridGlow/4)) + ',' + (180- Math.floor(gridGlow/4)) + ')';
+  ctx.fillStyle = 'rgb(' + (70 - Math.floor(gridGlow/4)) + ',' + (60 - Math.floor(gridGlow/4)) + ',' + (90- Math.floor(gridGlow/4)) + ')';
   ctx.fillRect(-width/2, -height/2, gameWidth + width, height/2); // top
   ctx.fillRect(-width/2, -height/2, width/2, gameHeight + height); // left
   ctx.fillRect(gameWidth, -height/2, width/2, gameHeight + height); // right
@@ -168,6 +168,7 @@ var render_player = function(player) {
   // instead of filling the arc, we fill a variable-sized rectangle
   // that is clipped to the arc
   ctx.fillStyle = '#5DAE8B'; //52EDB7 // 4CD964
+
   // We want the rectangle to get progressively taller starting from the bottom
   // There are two ways to do this:
   // 1. Change the Y value and height every time
@@ -176,18 +177,41 @@ var render_player = function(player) {
   ctx.fillRect(player.x - player.radius, player.y + player.radius, player.radius * 2, (player.health/playerHealth) * (-player.radius*2)); // last is amount to clip
   ctx.restore(); // reset clipping region
 
+  if(player.level > 1) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.radius*(3/4), 0, 2 * Math.PI, false);
+    ctx.clip();
+    ctx.fillStyle = '#1d62f0';
+
+    ctx.fillRect(player.x - player.radius*(3/4), player.y + player.radius*(3/4), (player.radius*(3/4)) * 2, (player.health/playerHealth) * (-player.radius*(3/4)*2)); // last is amount to clip
+    ctx.restore(); // reset clipping region
+  }
+
+  if(player.level > 2) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.radius*(1/2), 0, 2 * Math.PI, false);
+    ctx.clip(); // Make a clipping region out of this path
+    // instead of filling the arc, we fill a variable-sized rectangle
+    // that is clipped to the arc
+    ctx.fillStyle = '#7f31c8'; 
+    ctx.fillRect(player.x - player.radius*(1/2), player.y + player.radius*(1/2), player.radius , (player.health/playerHealth) * (-player.radius)); // last is amount to clip
+    ctx.restore(); // reset clipping region
+  }
+
   ctx.beginPath();
   ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI, false);
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 2;
   ctx.strokeStyle = '#4A4A4A';
   ctx.stroke();
   ctx.closePath();
+
 
   ctx.fillStyle = '#111111';
 
   // drawing gun VV
   ctx.save();
-
   ctx.translate(player.x, player.y);
   
   if(!astroidMode) {
