@@ -23,7 +23,7 @@ var Player = function (x, y) {
 
   this.rotation = 0; // used in asteroid version
 
-  this.health = 100;
+  this.health = playerHealth;
 
   // player movement
   this.left = false;

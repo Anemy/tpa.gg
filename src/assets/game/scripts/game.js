@@ -109,16 +109,35 @@ Game.prototype.gameLoop = function() {
   this.lastTime = currentTime;
 }
 
+// lerp function
+// take in 2 return %p on how close to 1st one is requested
+Game.prototype.lerp = function(p, first, second) {
+    var difference = second - first;
+    return first + ((p / 100) * difference);
+}
+
 // called when the packet from the server is a game packet to parse
 // populate local fields with data from the server
 Game.prototype.clientParseGameData = function(data) {
-  // console.log('Data recieved: ' + data);
+  if(data.countdownTimer > 0) {
+    var timeSinceMessageSent = (new Date()).getTime() - data.timestamp; // in ms
+    if(timeSinceMessageSent < 0) {
+      timeSinceMessageSent = 0;
+    }
 
-  var timeSinceMessageSent = new Date().getTime() - data.timestamp; // in ms
+    this.countdownTimer = data.countdownTimer - (timeSinceMessageSent/1000); // countdown timer in s
+  }
 
-  this.countdownTimer = data.countdownTimer - (timeSinceMessageSent/1000); // countdown timer in s
+  // load player data from server
+  for(var i = 0; i < data.players.length; i++) {
+    if(i == localPlayerID) {
+      // for self, give closer to local calculations because lags
 
-  this.players = data.players;
+    }
+    else {
+      this.players[i] = data.players[i];
+    }
+  }
   this.bullets = data.bullets;
 
   // console.log('We got data baby! ' + data);
@@ -134,12 +153,20 @@ Game.prototype.checkCollisions = function(delta) {
         // hurt the playa
         this.players[i].health -= this.bullets[k].damage;
 
-        // kill the bullet
-        this.bullets.splice(k, 1);
+
         if(this.server) {
           // send something special to clients ?
-
+          // maybe blood spawning if it doesn't work out
         }
+        else {
+          // spawn particles/blood
+          for(var k = 0; k < 30; k++) { // 20 particles to make
+            var colorToBe = 'rgba(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*50) + ',' + Math.floor(Math.random()*50); // THE END ) NOT ADDED BECause ALPHA ADDED
+            this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, returnNeg(Math.random()*200), returnNeg(Math.random()*200), colorToBe));
+          }
+
+          // kill the bullet
+          this.bullets.splice(k, 1);
         break;
       }
     }
@@ -155,7 +182,7 @@ Game.prototype.update = function(delta) {
     if(!updateBullet(this.bullets[i], delta)) { // dead bullet?
       if(!this.server) { // only spawn particles on the client
         // spawn particles
-        for(var k = 0; k < 20; k++) { // 20 particles to make
+        for(var k = 0; k < 30; k++) { // 20 particles to make
           var colorToBe = 'rgba(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255); // THE END ) NOT ADDED BECause ALPHA ADDED
           this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, returnNeg(Math.random()*200), returnNeg(Math.random()*200), colorToBe));
         }

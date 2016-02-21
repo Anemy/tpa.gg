@@ -5,8 +5,8 @@ This contains all of the constants used in the game
 */
 
 
-const width = 800;
-const height = 600;
+const width = 1000;
+const height = 800;
 
 const gameWidth = 2400;
 const gameHeight = 1800;
@@ -16,6 +16,7 @@ const playerRadius = 20;
 const playerGunSize = 10;
 const playerJump = -300;
 const playerAcceleration = 450;
+const playerHealth = 100;
 const maxPlayerSpeed = 450; // IDK WHAT THIS SHOULD BE
 const shootRate = 400;
 const friction = 70;

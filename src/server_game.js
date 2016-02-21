@@ -121,7 +121,7 @@ var serverSendGameData = function(lobby) {
   // gameLoop
   // lobby.game
   var dataToSend = {
-    timestamp: new Date().getTime()
+    timestamp: (new Date()).getTime()
   };
 
   dataToSend.countdownTimer = lobby.game.countdownTimer;
