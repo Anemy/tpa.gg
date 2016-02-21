@@ -35,8 +35,6 @@ var Player = function (x, y) {
 }
 // handles the updating of the player
 updatePlayer = function(player, delta) {
-  // console.log('Player speed: ' + this.xDir);
-
   // when this hits 0 the player can shoot again
   if(player.shootCounter > 0) {
     player.shootCounter -= delta*1000;
@@ -73,20 +71,20 @@ updatePlayer = function(player, delta) {
   else {
     // update player movement astroid mode // rotation is in degrees for some reason
     if(player.left) {
-      this.rotation += astroidModeRotationSpeed * delta;
+      player.rotation -= astroidModeRotationSpeed * delta;
     }
     if(player.right) {
-      this.rotation -= astroidModeRotationSpeed * delta;
+      player.rotation += astroidModeRotationSpeed * delta;
     }
 
-    if(Math.abs(this.rotation) > 360) {
-      this.rotation %= 360;
+    if(Math.abs(player.rotation) > 360) {
+      player.rotation %= 360;
     }
 
     // boosting movement
     if(player.up) {
-      player.xDir += playerAcceleration*Math.cos(this.rotation * (Math.PI/180));
-      player.yDir += playerAcceleration*Math.sin(this.rotation * (Math.PI/180));
+      player.xDir += playerAcceleration*Math.cos(player.rotation * (Math.PI/180)) * delta;
+      player.yDir += playerAcceleration*Math.sin(player.rotation * (Math.PI/180)) * delta;
 
       // speed limit
       if(player.xDir < -maxPlayerSpeed) {

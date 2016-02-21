@@ -18,7 +18,7 @@ var serverEventHandlers = {
   lobbyFound: function(body){
     // console.log("lobby found: " + body);
     $('.statusText').text('Lobby Found: ' + body + '/' + minPlayers + ' Players');
-    document.title = 'Lobby found!';
+    document.title = body + '/' + minPlayers + ' Waiting...';
   },
   ping: function(body){
     // console.log("ping " + body);
@@ -50,6 +50,83 @@ var serverEventHandlers = {
   },
   gameData: function(body) {
     game.clientParseGameData(body);
+  },
+  gameEnd: function(body) {
+
+    var resultString = "Uh... Tie?";
+    if(Number(body.winner) == localPlayerID) { 
+      resultString = "Victory!!";
+      if(Math.random()*100 < 7) {
+        resultString = "Victory!! Nice one.";
+      }
+      else if(Math.random()*100 < 7) {
+        resultString = "Victory!! Slick stuff";
+      }
+      else if(Math.random()*100 < 7) {
+        resultString = "Victory!! Good job";
+      }
+      else if(Math.random()*100 < 7) {
+        resultString = "Fantastic Victory.";
+      }
+      else if(Math.random()*100 < 7) {
+        resultString = "Excellent Victory.";
+      }
+      else if(Math.random()*100 < 7) {
+        resultString = "You are the greatest.";
+      }
+      else if(Math.random()*100 < 7) {
+        resultString = "That was incredible. VICTORY!";
+      }
+    }
+    else if(Number(body.winner) >= 0) {
+      resultString = "Defeat.";
+      if(Math.random()*100 < 7) {
+        resultString = "Sucker";
+      }
+      else if(Math.random()*100 < 7) {
+        resultString = "Better luck next time.";
+      }
+      else if(Math.random()*100 < 7) {
+        resultString = "Great effort! Defeat.";
+      }
+      else if(Math.random()*100 < 7) {
+        resultString = ":'(";
+      }
+      else if(Math.random()*100 < 4) {
+        resultString = "You tried :/";
+      }
+      else if(Math.random()*100 < 10) {
+        resultString = "You may have lost the battle.";
+      }
+    }
+
+    // Game has ended, set up the background game
+    game = new Game(false);
+
+    localPlayerID = 0;
+
+    game.players.push(new Player(gameWidth/2, gameHeight/2));
+    game.countdownTimer = 0;
+
+    game = new Game();
+
+    // console.log('try to join game');
+    document.title = 'Searching for game...';
+    $('.statusText').text(resultString);
+
+    setTimeout( function() {
+      $('.statusText').text('Searching for a game...');
+      $('.gameSearcher').fadeIn(500);
+      $('.statusText').fadeIn(500);
+      $('.waitAnimation').fadeIn(500);
+
+      // give it that little wait before searching for the game
+      setTimeout( function() {
+        // try to join a game
+        var message = JSON.stringify({'event': 'joinGame'});
+        socket.send(message);
+      }, 2000);
+    }, 6000);
   }
 }
 

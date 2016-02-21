@@ -87,11 +87,11 @@ var Lobby = function(lobbyId) {
   // boolean says if game is going or not - don't let people join when it's going
   this.inProgress = false;
 
-  this.game = new Game(true, this, serverSendGameData);
+  this.game = new Game(true, this, serverSendGameData, lobbyEndGame);
 }
 
 var launchGame = function(lobby) {
-  console.log("Start a game!");
+  // console.log("Start a game!");
 
   lobby.inProgress = true;
 
@@ -108,16 +108,33 @@ var launchGame = function(lobby) {
 
   // add the new players
   lobby.game.players.push(new Player(width/6, width/6)); // top left
-  // lobby.game.players.push(new Player(gameWidth - width/6, width/6)); // top right
-  // lobby.game.players.push(new Player(width/6, gameHeight - width/6); // bottom left
   lobby.game.players.push(new Player(gameWidth - width/6, gameHeight - width/6)); // bottom right
+  if(minPlayers > 2) {
+    lobby.game.players.push(new Player(width/6, gameHeight - width/6)); // bottom left
+    if(minPlayers > 3) {
+      lobby.game.players.push(new Player(gameWidth - width/6, width/6)); // top right
+    }
+  }
 
   // start the game running
   lobby.game.startGameLoop();
 }
 
-var lobbyEndGame = function() {
+var lobbyEndGame = function(lobby) {
+  var message = JSON.stringify({"event": "gameEnd", "body": {"winner": lobby.game.winner}});
 
+  for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
+    var clientId = Object.keys(lobby.clients)[i];
+    var client = lobby.clients[clientId];
+
+    client.lobbyId = null;
+    client.inLobby = false;
+
+    client.send(message);
+  }
+
+  // destroy lobby
+  delete lobbies[lobby.lobbyId];
 }
 
 // sends all of the game data of the indicated lobby from the server
@@ -238,8 +255,33 @@ var server_start = function(server, port) {
     client.on('disconnect', function() {
       // tell the game to remove a player?
       if(client.inLobby) {
-        // disconnect client from game
-        // TODO
+        if(client.lobbyId && lobbies[client.lobbyId]) {
+          // client is in a lobby, remove them from the clients, and update the lobby if it's not in game yet
+          if(lobbies[client.lobbyId].inProgress) {
+            // a game is in process
+            delete lobbies[client.lobbyId].clients[client.clientId];
+            
+            // delete the empty lobby
+            lobbies[client.lobbyId].population--;
+            if(lobbies[client.lobbyId].population <= 0) {
+              delete lobbies[client.lobbyId];
+            }
+          }
+          else {
+            lobbies[client.lobbyId].population--;
+            
+            // delete the lobby if all the homies leave
+            if(lobbies[client.lobbyId].population <= 0) {
+              delete lobbies[client.lobbyId];
+            }
+            else {
+              delete lobbies[client.lobbyId].clients[client.clientId];
+            }
+          }
+
+          client.inLobby = false;
+          client.lobbyId = null;
+        }
       }
     });
   });

@@ -64,6 +64,9 @@ body {
 
 
 .gameSearcher {
+
+  font-family: 'Oswald', sans-serif;
+  
   position: absolute;
   height: 400px;
   width: 600px;
@@ -162,7 +165,7 @@ body {
       left: 50%;
       border: 0px solid #584860;
       transform: translate(-50%, -50%);
-      animation: loading 1000ms ease-out forwards infinite;
+      animation: loading 950ms ease-out forwards infinite;
     }
     
   }

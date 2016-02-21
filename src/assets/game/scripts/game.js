@@ -16,10 +16,10 @@ var localPlayerID = 0;
 
 var game; // game is a Game object
 
-const astroidMode = false;
+const astroidMode = true;
 
 // param: server - true/false - true means it's the server
-var Game = function(server, lobby, serverSendGameData, a) {
+var Game = function(server, lobby, serverSendGameData, lobbyEndGame) {
   this.server = server;
 
   // used by server so game can call to update clients
@@ -27,10 +27,13 @@ var Game = function(server, lobby, serverSendGameData, a) {
     this.lobby = lobby;
 
     this.serverSendGameData = serverSendGameData;
+    this.lobbyEndGame = lobbyEndGame;
   }
 
   // array of Player objects (player.js)
   this.players = [];
+
+  this.winner = -1;
 
   // test player
   // this.players.push(new Player(gameWidth/2,gameHeight/2));
@@ -144,6 +147,10 @@ Game.prototype.clientParseGameData = function(data) {
         var x = this.players[i].x;
         var y = this.players[i].y;
 
+        var mouseX = this.players[i].mouseX;
+        var mouseY = this.players[i].mouseY;
+
+
         this.players[i] = data.players[i];
 
         // for self, give closer to local calculations because lags
@@ -156,12 +163,6 @@ Game.prototype.clientParseGameData = function(data) {
     }
   }
   this.bullets = data.bullets;
-  // for(var i = 0; i < this.bullets; i++) {
-  //   this.bullets[i].x += (this.countdownTimer/1000) * bullets[i].xDir;
-  //   this.bullets[i].y += (this.countdownTimer/1000) * bullets[i].yDir;
-  // }
-
-  // console.log('We got data baby! ' + data);
 }
 
 Game.prototype.checkCollisions = function(delta) {
@@ -195,9 +196,10 @@ Game.prototype.checkCollisions = function(delta) {
               }
             }
 
-            // end game if ya can
-            if(stillAlive >= 0) {
-              endGame();
+            // end game if ya can (server)
+            if(stillAlive >= -1) { // only one or nobody is alive
+              this.winner = stillAlive;
+              this.lobbyEndGame(this.lobby);
             }
           }
         }
@@ -258,7 +260,14 @@ Game.prototype.update = function(delta) {
     if(this.players[i].shoot && this.players[i].shootCounter <= 0) {
       this.players[i].shootCounter = shootRate;
 
-      var shootAngle = Math.atan2(this.players[i].mouseY, this.players[i].mouseX);
+      var shootAngle;
+      // shoot a new bullet
+      if(!astroidMode) {
+        shootAngle = Math.atan2(this.players[i].mouseY, this.players[i].mouseX);
+      }
+      else {
+        shootAngle = this.players[i].rotation * (Math.PI/180);
+      }
       this.bullets.push(new Bullet(this.players[i].x + (this.players[i].radius+this.players[i].gunSize)*Math.cos(shootAngle), this.players[i].y + (this.players[i].radius+this.players[i].gunSize)*Math.sin(shootAngle), bulletSpeed*Math.cos(shootAngle), bulletSpeed*Math.sin(shootAngle), shootAngle, i));
     }
   }

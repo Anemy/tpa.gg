@@ -8,8 +8,8 @@ This contains all of the constants used in the game
 const width = 1000;
 const height = 800;
 
-const gameWidth = 2400;
-const gameHeight = 1800;
+const gameWidth = 2000;
+const gameHeight = 1600;
 
 // player
 const playerRadius = 24;
@@ -20,7 +20,7 @@ const playerHealth = 100;
 const maxPlayerSpeed = 400; // IDK WHAT THIS SHOULD BE
 const shootRate = 500;
 const friction = 60;
-const astroidModeRotationSpeed = 10;
+const astroidModeRotationSpeed = 200;
 
 // countdown time before a game starts
 const countdownTimerStart = 5; // in seconds
@@ -30,7 +30,7 @@ const maxPlayers = 2;
 const minPlayers = 2;
 
 // bullet
-const bulletSpeed = 700;
+const bulletSpeed = 800;
 const bulletDamage = 10;
 
 const fps = 1000 / 60; // 60 is the real fps
