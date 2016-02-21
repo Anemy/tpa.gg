@@ -56,7 +56,9 @@ var render = function(delta) {
 
   // PLAYERS
   for(var i = 0; i < game.players.length; i++) {
-    render_player(game.players[i]);
+    if(game.players[i].health > 0) {
+      render_player(game.players[i]);
+    }
   }
 
   // BULLETS
@@ -99,7 +101,7 @@ var drawCountDownTimer = function() {
 var render_map = function(delta) {
 
   // around the border
-  ctx.fillStyle = '#F7F7F7';
+  ctx.fillStyle = 'rgb(' + (150 - Math.floor(gridGlow/4)) + ',' + (150 - Math.floor(gridGlow/4)) + ',' + (255- Math.floor(gridGlow/4)) + ')';
   ctx.fillRect(-width/2, -height/2, gameWidth + width, height/2); // top
   ctx.fillRect(-width/2, -height/2, width/2, gameHeight + height); // left
   ctx.fillRect(gameWidth, -height/2, width/2, gameHeight + height); // right
@@ -114,10 +116,10 @@ var render_map = function(delta) {
 
   // glowing grid updating
   if(gridGlowUp) {
-    gridGlow += 80 * delta;
+    gridGlow += 70 * delta;
   }
   else {
-    gridGlow -= 80 * delta;
+    gridGlow -= 70 * delta;
   }
   if(gridGlowUp && gridGlow > 200) {
     gridGlowUp = false;
@@ -126,7 +128,7 @@ var render_map = function(delta) {
     gridGlowUp = true;
   }
 
-  ctx.fillStyle = 'rgb(' + Math.floor(gridGlow) + ',' + Math.floor(gridGlow) + ',' + Math.floor(gridGlow) + ')';
+  ctx.fillStyle = 'rgb(' + Math.floor(gridGlow/2) + ',' + Math.floor(gridGlow/2) + ',' + Math.floor(gridGlow) + ')';
 
   // x 
   for(var i = 0; i < gridSize; i++) {
@@ -147,8 +149,31 @@ var render_player = function(player) {
   // drawing circle player
   ctx.beginPath();
   ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI, false);
-  ctx.fillStyle = '#52EDC7';
+  ctx.fillStyle = '#EE1111';
   ctx.fill();
+  // ctx.lineWidth = 1;
+  // ctx.strokeStyle = '#4A4A4A';
+  // ctx.stroke();
+  ctx.closePath();
+  
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI, false);
+  ctx.clip(); // Make a clipping region out of this path
+  // instead of filling the arc, we fill a variable-sized rectangle
+  // that is clipped to the arc
+  ctx.fillStyle = '#52EDB7';
+  // We want the rectangle to get progressively taller starting from the bottom
+  // There are two ways to do this:
+  // 1. Change the Y value and height every time
+  // 2. Using a negative height
+  // I'm lazy, so we're going with 2
+  ctx.fillRect(player.x - player.radius, player.y + player.radius, player.radius * 2, (player.health/playerHealth) * (-player.radius*2)); // last is amount to clip
+  ctx.restore(); // reset clipping region
+
+  ctx.beginPath();
+  ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI, false);
   ctx.lineWidth = 1;
   ctx.strokeStyle = '#4A4A4A';
   ctx.stroke();

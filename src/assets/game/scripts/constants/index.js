@@ -18,12 +18,12 @@ const playerJump = -300;
 const playerAcceleration = 450;
 const playerHealth = 100;
 const maxPlayerSpeed = 450; // IDK WHAT THIS SHOULD BE
-const shootRate = 400;
+const shootRate = 500;
 const friction = 70;
 const astroidModeRotationSpeed = 10;
 
 // countdown time before a game starts
-const countdownTimerStart = 7; // in seconds
+const countdownTimerStart = 5; // in seconds
 
 // lobbies
 const maxPlayers = 2;

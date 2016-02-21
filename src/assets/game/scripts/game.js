@@ -48,6 +48,7 @@ var Game = function(server, lobby, serverSendGameData) {
     // server exclusive things
   }
   else {
+    this.firstUpdate = true;
     // client exclusive things
   }
 }
@@ -119,26 +120,45 @@ Game.prototype.lerp = function(p, first, second) {
 // called when the packet from the server is a game packet to parse
 // populate local fields with data from the server
 Game.prototype.clientParseGameData = function(data) {
-  if(data.countdownTimer > 0) {
-    var timeSinceMessageSent = (new Date()).getTime() - data.timestamp; // in ms
-    if(timeSinceMessageSent < 0) {
-      timeSinceMessageSent = 0;
-    }
+  var timeSinceMessageSent = (new Date()).getTime() - data.timestamp; // in ms
+  if(timeSinceMessageSent < 0) {
+    timeSinceMessageSent = 0;
+  }
 
+  // console.log('Time since last message: ' + timeSinceMessageSent);
+
+  if(data.countdownTimer > 0) {
     this.countdownTimer = data.countdownTimer - (timeSinceMessageSent/1000); // countdown timer in s
   }
 
+  // first time through hard update
+  if(this.firstUpdate) {
+    this.players = data.players;
+    this.firstUpdate = false;
+  }
+  else {
   // load player data from server
-  for(var i = 0; i < data.players.length; i++) {
-    if(i == localPlayerID) {
-      // for self, give closer to local calculations because lags
+    for(var i = 0; i < data.players.length; i++) {
+      if(i == localPlayerID) {
+        var x = this.players[i].x;
+        var y = this.players[i].y;
 
-    }
-    else {
-      this.players[i] = data.players[i];
+        this.players[i] = data.players[i];
+
+        // for self, give closer to local calculations because lags
+        this.players[i].x = this.lerp(100 * (ping / 120), x, data.players[i].x);
+        this.players[i].y = this.lerp(100 * (ping / 120), y, data.players[i].y);
+      }
+      else {
+        this.players[i] = data.players[i];
+      }
     }
   }
   this.bullets = data.bullets;
+  for(var i = 0; i < this.bullets; i++) {
+    this.bullets[i].x += bullets[i].xDir;
+    this.bullets[i].y += bullets[i].yDir;
+  }
 
   // console.log('We got data baby! ' + data);
 }
@@ -147,26 +167,27 @@ Game.prototype.checkCollisions = function(delta) {
   // player - bullet collisions
   for(var k = this.bullets.length-1; k >= 0; k--) {
     for(var i = 0; i < this.players.length; i++) {
-      if(this.bullets[k].owner != i && // make sure you aren't shooting yourself
+      if(this.players[i].health > 0 && this.bullets[k].owner != i && // make sure you aren't shooting yourself
           Math.abs(this.bullets[k].x - this.players[i].x) < this.players[i].radius + this.bullets[k].radius &&// x proximity
           Math.abs(this.bullets[k].y - this.players[i].y) < this.players[i].radius + this.bullets[k].radius) {
         // hurt the playa
         this.players[i].health -= this.bullets[k].damage;
-
 
         if(this.server) {
           // send something special to clients ?
           // maybe blood spawning if it doesn't work out
         }
         else {
-          // spawn particles/blood
-          for(var k = 0; k < 30; k++) { // 20 particles to make
+          // only spawn particles on the client // blood
+          for(var j = 0; j < 20; j++) { // 20 particles to make
             var colorToBe = 'rgba(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*50) + ',' + Math.floor(Math.random()*50); // THE END ) NOT ADDED BECause ALPHA ADDED
-            this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, returnNeg(Math.random()*200), returnNeg(Math.random()*200), colorToBe));
+            this.particles.push(new Particle(this.bullets[k].x, this.bullets[k].y, returnNeg(Math.random()*200), returnNeg(Math.random()*200), colorToBe));
           }
+        }
 
-          // kill the bullet
-          this.bullets.splice(k, 1);
+        // kill the bullet
+        this.bullets.splice(k, 1);
+
         break;
       }
     }
@@ -195,6 +216,11 @@ Game.prototype.update = function(delta) {
 
   // player updating
   for(var i = 0; i < this.players.length; i++) {
+    if(this.players[i].health <= 0) {
+      // do nothing
+      continue;
+    }
+
     // player update
     // this.players[i].update(delta);
     updatePlayer(this.players[i], delta);

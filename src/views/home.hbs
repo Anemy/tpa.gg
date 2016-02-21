@@ -1,10 +1,15 @@
-{{!-- welcome to the homepage --}}
+<div class="background">
+  <div class="far"/>
+  <div class="dots"/>
+</div>
 
 <noscript>
   alert("Please enable javascript to play this game.");
 </noscript>
 
-<canvas id="canvas" style="border:1px solid #000000;">
-</canvas>
+<div class="gameFrame">
+  <canvas id="canvas" width="1000" height="800"></canvas>
+  {{!-- <div class="messageText">Loading...</div> --}}
+</div>
 
-<div class="joinGame">Join Game</div>
+<div class="joinGame">Find a Game</div>

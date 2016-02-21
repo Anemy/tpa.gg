@@ -14,6 +14,8 @@ var Player = function (x, y) {
   this.radius = playerRadius;
   this.gunSize = playerGunSize;
 
+  this.level = 1;
+
   // boolean says if they want to shoot or not
   this.shoot = false;
   this.shootCounter = 0;

@@ -1,1 +1,5 @@
-console.log('js loaded');
+/*
+
+Does nothing
+
+*/

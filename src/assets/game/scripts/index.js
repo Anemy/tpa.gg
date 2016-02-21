@@ -14,7 +14,7 @@ var clientId = 0;
 
 var serverEventHandlers = {
   lobbyFound: function(body){
-    console.log("lobby found: " + body);
+    // console.log("lobby found: " + body);
   },
   ping: function(body){
     // console.log("ping " + body);
@@ -24,7 +24,7 @@ var serverEventHandlers = {
   gameStart: function(body){
     clientId = body.clientId;
     localPlayerID = body.inGameNumber;
-    console.log('Let\'s start this game');
+    // console.log('Let\'s start this game');
 
     game = new Game(false);
     game.initGame();
@@ -60,7 +60,7 @@ $(document).ready(function() {
     }
   });
   // find a game
-  $('#joinGame').on('click', function() {
+  $('.joinGame').on('click', function() {
     console.log('try to join game');
 
     // try to join a game
@@ -71,4 +71,4 @@ $(document).ready(function() {
 
 
 
-console.log('Game script loaded');
+console.log('Game script loaded.');

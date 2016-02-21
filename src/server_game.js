@@ -107,10 +107,10 @@ var launchGame = function(lobby) {
   }
 
   // add the new players
-  lobby.game.players.push(new Player(playerRadius, playerRadius)); // top left
-  // lobby.game.players.push(new Player(gameWidth - playerRadius, playerRadius)); // top right
-  // lobby.game.players.push(new Player(playerRadius, gameHeight - playerRadius)); // bottom left
-  lobby.game.players.push(new Player(gameWidth - playerRadius, gameHeight - playerRadius)); // bottom right
+  lobby.game.players.push(new Player(width/6, width/6)); // top left
+  // lobby.game.players.push(new Player(gameWidth - width/6, width/6)); // top right
+  // lobby.game.players.push(new Player(width/6, gameHeight - width/6); // bottom left
+  lobby.game.players.push(new Player(gameWidth - width/6, gameHeight - width/6)); // bottom right
 
   // start the game running
   lobby.game.startGameLoop();
