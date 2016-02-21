@@ -229,6 +229,10 @@ var render_player = function(player) {
 
   ctx.translate( -player.x, -player.y );
   ctx.restore();
+
+  ctx.fillStyle = '#111111';
+  ctx.font="14px Verdana";
+  ctx.fillText(player.username, player.x + player.radius - 3, player.y - player.radius + 2);
 }
 
 var render_particle = function(particle) {

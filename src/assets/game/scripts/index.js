@@ -25,6 +25,9 @@ var localPlayerID = 0;
 
 var usersOnline = -1;
 
+// just a basic rate lmiiter
+var joinGameLastClick = 0;
+
 var serverEventHandlers = {
   lobbyFound: function(body) {
     // console.log("lobby found: " + body);
@@ -198,25 +201,37 @@ $(document).ready(function() {
       serverEventHandlers[eventName](eventBody);
     }
   });
+
+
   // find a game
   $('.joinGame').on('click', function() {
-    // console.log('try to join game');
-    document.title = 'Searching for game...';
-    $('.statusText').text('Searching for a game...');
+    if(Date.now() - joinGameLastClick > 1000) { // just a base rate limiter
 
-    $('.joinGame').fadeOut(500, function(){$('.joinGame').css('display', 'none');});
+      joinGameLastClick = Date.now();
 
-    setTimeout(function() {
-      $('.statusText').fadeIn(500);
-      $('.waitAnimation').fadeIn(500);
-    }, 1000);
-
-    // give it that little wait before searching for the game
-    setTimeout( function() {
-      // try to join a game
-      var message = JSON.stringify({'event': 'joinGame'});
+      // send the new username to the server
+      var message = JSON.stringify({'event': 'nameChange', 'body': $('.nameInput').val()});
       socket.send(message);
-    }, 2000);
+
+      // console.log('try to join game');
+      document.title = 'Searching for game...';
+      $('.statusText').text('Searching for a game...');
+
+      $('.joinGame').fadeOut(500, function(){$('.joinGame').css('display', 'none');});
+      $('.nameInput').fadeOut(500, function(){$('.nameInput').css('display', 'none');});
+
+      setTimeout(function() {
+        $('.statusText').fadeIn(500);
+        $('.waitAnimation').fadeIn(500);
+      }, 1000);
+
+      // give it that little wait before searching for the game
+      setTimeout( function() {
+        // try to join a game
+        var message = JSON.stringify({'event': 'joinGame'});
+        socket.send(message);
+      }, 2000);
+    }
   });
 
   game = new Game(false);

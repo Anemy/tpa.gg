@@ -4,7 +4,9 @@ This contains everything pertaining to the players
 
 */
 
-var Player = function (x, y) {
+var Player = function (x, y, username) {
+  this.username = username || "";
+
   this.x = x;
   this.y = y;
 

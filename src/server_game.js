@@ -74,6 +74,22 @@ var clientEventHandlers = {
       // console.log("Client wants to join a game");
       joinLobby(client);
     }
+  },
+  nameChange: function(body, client) {
+    if(body && client.inLobby == false && body.length < 25) {
+      var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+      };
+
+      client.username = String(body).replace(/[&<>"'\/]/g, function (s) {
+        return entityMap[s];
+      });
+    }
   }
 };
 
@@ -104,18 +120,21 @@ var launchGame = function(lobby) {
 
     var message = JSON.stringify({"event": "gameStart", "body": {"clientId": clientId, "inGameNumber": client.inGameNumber}});
     client.send(message);
-  }
 
-  // add the new players
-  lobby.game.players.push(new Player(width/6, width/6)); // top left
-  lobby.game.players.push(new Player(gameWidth - width/6, gameHeight - width/6)); // bottom right
-  if(minPlayers > 2) {
-    lobby.game.players.push(new Player(width/6, gameHeight - width/6)); // bottom left
-    if(minPlayers > 3) {
-      lobby.game.players.push(new Player(gameWidth - width/6, width/6)); // top right
+    // add the new players (yes this makes no sense)
+    if(i == 0) {
+      lobby.game.players.push(new Player(width/6, width/6, client.username)); // top left
+    }
+    if(i == 1) {
+      lobby.game.players.push(new Player(gameWidth - width/6, gameHeight - width/6, client.username)); // bottom right
+    }
+    if(i == 2) {
+      lobby.game.players.push(new Player(width/6, gameHeight - width/6, client.username)); // bottom left
+    }
+    if(i == 3) {
+      lobby.game.players.push(new Player(gameWidth - width/6, width/6, client.username)); // top right
     }
   }
-
   // start the game running
   lobby.game.startGameLoop();
 }
@@ -240,6 +259,7 @@ var server_start = function(server, port) {
 
     client.lobbyId = null;
     client.inLobby = false;
+    client.username = "";
     client.token = uuid.v4();
 
     // send the client a unique id (idk what to do with it yet LOL)
@@ -270,13 +290,6 @@ var server_start = function(server, port) {
         if(client.lobbyId && lobbies[client.lobbyId]) {
           // client is in a lobby, remove them from the clients, and update the lobby if it's not in game yet
           if(lobbies[client.lobbyId].inProgress) {
-
-            // kill their in game player // decided not to because of how we trigger game over
-            // if(lobbies[client.lobbyId].game) {
-            //   if(lobbies[client.lobbyId].game.players && client.inGameNumber && lobbies[client.lobbyId].game.players[client.inGameNumber]) {
-            //     lobbies[client.lobbyId].game.players[client.inGameNumber].health = -20;
-            //   }
-            // }
 
             // a game is in process
             delete lobbies[client.lobbyId].clients[client.clientId];
