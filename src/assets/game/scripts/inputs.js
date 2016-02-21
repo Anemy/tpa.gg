@@ -11,7 +11,7 @@ var lastKeyDown = -1;
 var handleKeydown = function (e) {
   var keyCode = e.keyCode;
 
-  if(inGame && lastKeyDown != keyCode) {
+  if(inGame) { //  && lastKeyDown != keyCode) {
     var message = JSON.stringify({'event': 'input', 'body': {'keyCode': keyCode, 'keyType': 'd'}});
     socket.send(message);
   }

@@ -63,10 +63,23 @@ body {
 }
 
 
+.playerCount {
+  position: absolute;
+
+  font-family: 'Oswald', sans-serif;
+
+  font-size: 14px;
+
+  color: #F7F7F7;
+
+  right: 10px;
+  top: 10px;
+}
+
 .gameSearcher {
 
   font-family: 'Oswald', sans-serif;
-  
+
   position: absolute;
   height: 400px;
   width: 600px;
@@ -144,6 +157,11 @@ body {
     cursor: pointer;
 
     box-shadow: 0 0 50px rgba(255,255,255,0.3);
+  }
+  .joinGame:active {
+    cursor: pointer;
+
+    box-shadow: 0 0 50px rgba(255,255,255,0.15);
   }
 
   .waitAnimation {

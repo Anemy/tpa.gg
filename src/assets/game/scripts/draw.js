@@ -14,6 +14,8 @@ const gridGlowDiff = 50;
 var render = function(delta) {
   ctx.clearRect(0, 0, width, height); 
 
+  ctx.save();
+
   var sideScrollX = 0;
   var sideScrollY = 0;
 
@@ -71,9 +73,11 @@ var render = function(delta) {
   }
 
   //un-translate for the side scrolling  XXXX
-  ctx.translate(sideScrollX, 0);
-  //un-translate for the side scrolling  YYYY
-  ctx.translate(0, sideScrollY);
+  // ctx.translate(sideScrollX, 0);
+  // //un-translate for the side scrolling  YYYY
+  // ctx.translate(0, sideScrollY);
+
+  ctx.restore();
 }
 
 // what could this function possibly do?!

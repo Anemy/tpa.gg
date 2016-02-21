@@ -20,6 +20,7 @@ includeInThisContext(__dirname+"/assets/game/scripts/player.js");
 includeInThisContext(__dirname+"/assets/game/scripts/bullet.js");
 includeInThisContext(__dirname+"/assets/game/scripts/constants/index.js");
 
+var usersOnline = 0;
 
 var clientEventHandlers = {
   input: function(body, client){
@@ -65,13 +66,12 @@ var clientEventHandlers = {
     }
   },
   ping: function(body, client){
-    var message = {"event": "ping", "body": body};
+    var message = {"event": "ping", "body": {"ping": body, "usersOnline": usersOnline}};
     client.send(JSON.stringify(message));
   },
   joinGame: function(body, client){
     if (client.inLobby === false){
-      console.log("Client wants to join a game");
-      // console.log("client isn't in lobby, joining now, lobbyId is " + client.lobbyId);
+      // console.log("Client wants to join a game");
       joinLobby(client);
     }
   }
@@ -121,20 +121,28 @@ var launchGame = function(lobby) {
 }
 
 var lobbyEndGame = function(lobby) {
-  var message = JSON.stringify({"event": "gameEnd", "body": lobby.game.winner});
+  if(lobby && lobby.game) {
+    var message = JSON.stringify({"event": "gameEnd", "body": lobby.game.winner});
+    for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
+      var clientId = Object.keys(lobby.clients)[i];
+      var client = lobby.clients[clientId];
 
-  for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
-    var clientId = Object.keys(lobby.clients)[i];
-    var client = lobby.clients[clientId];
+      client.lobbyId = null;
+      client.inLobby = false;
 
-    client.lobbyId = null;
-    client.inLobby = false;
-
-    client.send(message);
+      client.send(message);
+    }
   }
 
-  // destroy lobby
-  delete lobbies[lobby.lobbyId];
+  if(lobbies[lobby.lobbyId].game) {
+    clearInterval(lobbies[lobby.lobbyId].game.gameLoopInterval);
+    delete lobbies[lobby.lobbyId].game;
+  }
+
+  if(lobbies[lobby.lobbyId]) {
+    // destroy the lobby
+    delete lobbies[lobby.lobbyId];
+  }
 }
 
 // sends all of the game data of the indicated lobby from the server
@@ -163,7 +171,7 @@ var createNewLobby = function (client) {
   // create a new lobby
   var lobbyId = uuid.v4()
   lobbies[lobbyId] = new Lobby(lobbyId);
-  // console.log('Lobby created: ' + lobbyId);
+  console.log('New lobby created: ' + lobbyId);
 
   message = JSON.stringify({'event': 'lobbyFound', 'body': 1});
   client.send(message);
@@ -190,9 +198,11 @@ var joinLobby = function(client) {
     for (var i = 0; i < Object.keys(lobbies).length; i++){
       var lobbyId = Object.keys(lobbies)[i];
       var lobby = lobbies[lobbyId];
-      // console.log(lobby);
 
       if(lobby.population < maxPlayers && !lobby.inProgress) { // max players from constants/index.js
+
+        console.log('Open lobby found: ' + lobbyId);
+
         // add player to lobby
         client.inLobby = true;
         client.lobbyId = lobbyId;
@@ -201,19 +211,18 @@ var joinLobby = function(client) {
         lobby.population++;
         lobby.clients[client.token] = client;
 
-        client.send(JSON.stringify({'event': 'lobbyFound', 'body': lobby.population}));
+        var message = JSON.stringify({'event': 'lobbyFound', 'body': lobby.population});
+
+        for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
+          var clientId = Object.keys(lobby.clients)[i];
+          var client = lobby.clients[clientId];
+          client.send(message);
+        }
 
         // can the game start?
         if(lobby.population == minPlayers) {
           // start the game!
           launchGame(lobby);
-        }
-        else {
-          for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
-            var clientId = Object.keys(lobby.clients)[i];
-            var client = lobby.clients[clientId];
-            client.send(message);
-          }
         }
         return;
       }
@@ -228,6 +237,8 @@ var server_start = function(server, port) {
   // socket io creation and listening
   var io = require('socket.io')(server);
   io.sockets.on('connection', function(client) {
+    usersOnline++;
+
     client.lobbyId = null;
     client.inLobby = false;
     client.token = uuid.v4();
@@ -253,6 +264,8 @@ var server_start = function(server, port) {
     });
 
     client.on('disconnect', function() {
+      usersOnline--;
+
       // tell the game to remove a player?
       if(client.inLobby) {
         if(client.lobbyId && lobbies[client.lobbyId]) {
@@ -264,6 +277,14 @@ var server_start = function(server, port) {
             // delete the empty lobby
             lobbies[client.lobbyId].population--;
             if(lobbies[client.lobbyId].population <= 0) {
+
+              clearInterval(lobbies[client.lobbyId].game.gameLoopInterval);
+              delete lobbies[client.lobbyId].game.lobby;
+              delete lobbies[client.lobbyId].game;
+
+              // destroy the lobby
+              delete lobbies[lobby.lobbyId];
+
               delete lobbies[client.lobbyId];
             }
           }

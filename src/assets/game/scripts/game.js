@@ -8,15 +8,7 @@ This file contains the starting functions of the game and the base game loop log
 var canvas;
 var ctx;
 
-// used when computing time between game loop intervals
-var lastTime;
-
-// for client player controls
-var localPlayerID = 0;
-
-var game; // game is a Game object
-
-const astroidMode = true;
+const astroidMode = false;
 
 // param: server - true/false - true means it's the server
 var Game = function(server, lobby, serverSendGameData, lobbyEndGame) {
@@ -37,11 +29,14 @@ var Game = function(server, lobby, serverSendGameData, lobbyEndGame) {
 
   this.bullets = [];
 
+  this.gameLoopInterval = null;
+
   // used at end game for coolness
   this.slowTime = false;
 
   this.particles = [];
 
+  // used when computing time between game loop intervals
   this.lastTime = Date.now();
 
   // time until the game starts

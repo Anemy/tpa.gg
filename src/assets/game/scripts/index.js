@@ -14,6 +14,11 @@ var inGame = false;
 
 var clientId = 0;
 
+// for client player controls
+var localPlayerID = 0;
+
+var usersOnline = 1;
+
 var serverEventHandlers = {
   lobbyFound: function(body){
     // console.log("lobby found: " + body);
@@ -21,9 +26,14 @@ var serverEventHandlers = {
     document.title = body + '/' + minPlayers + ' Waiting...';
   },
   ping: function(body){
+    if(body.usersOnline != usersOnline) {
+      usersOnline = body.usersOnline;
+      $('.playerCount').text(usersOnline);
+    }
+
     // console.log("ping " + body);
     var t = new Date().getTime();
-    ping = t - Number(body);
+    ping = t - Number(body.ping);
   },
   gameStart: function(body){
     clientId = body.clientId;
@@ -37,10 +47,11 @@ var serverEventHandlers = {
     $('.gameSearcher').fadeOut(500);
     $('.statusText').fadeOut(500);
     $('.waitAnimation').fadeOut(500);
-    setTimeout(function(){document.title = 'GAME STARTING!!!!'},2000);
-    setTimeout(function(){document.title = 'GO GO GO!!!!'},4000);
-    setTimeout(function(){document.title = 'tpa'},6000);
+    setTimeout(function(){document.title = 'GAME STARTING!!!!';},2000);
+    setTimeout(function(){document.title = 'GO GO GO!!!!';},4000);
+    setTimeout(function(){document.title = 'tpa';},6000);
 
+    clearInterval(game.gameLoopInterval);
     game = new Game(false);
     localPlayerID = body.inGameNumber;
     game.startGameLoop();
@@ -78,25 +89,16 @@ var serverEventHandlers = {
         resultString = "That was incredible. VICTORY!";
       }
     }
-    else if(Number(body.winner) >= 0) {
+    else if(Number(body) >= 0) {
       resultString = "Defeat.";
       if(Math.random()*100 < 7) {
-        resultString = "Sucker";
-      }
-      else if(Math.random()*100 < 7) {
         resultString = "Better luck next time.";
-      }
-      else if(Math.random()*100 < 7) {
-        resultString = "Great effort! Defeat.";
-      }
-      else if(Math.random()*100 < 7) {
-        resultString = ":'(";
-      }
-      else if(Math.random()*100 < 4) {
-        resultString = "You tried :/";
       }
       else if(Math.random()*100 < 10) {
         resultString = "You may have lost the battle.";
+      }
+      else if(Math.random()*100 < 10) {
+        resultString = "You have been defeated";
       }
     }
 
@@ -109,30 +111,35 @@ var serverEventHandlers = {
     setTimeout(function() {
       $('.gameSearcher').fadeIn(500);
       $('.statusText').fadeIn(500);
+      $('.waitAnimation').fadeIn(500);
+
+      document.title = 'tpa';
 
       // give it that little wait before searching for the game
       setTimeout( function() {
         // Game has ended, set up the background game
+        clearInterval(game.gameLoopInterval);
+
+        delete game;
         game = new Game(false);
 
         localPlayerID = 0;
 
         game.players.push(new Player(gameWidth/2, gameHeight/2));
         game.countdownTimer = 0;
-      }, 1000);
-    }, 500);
+      }, 4000);
+    }, 2000);
 
     setTimeout( function() {
       $('.statusText').text('Searching for a game...');
-      $('.waitAnimation').fadeIn(500);
 
       // give it that little wait before searching for the game
       setTimeout( function() {
         // try to join a game
         var message = JSON.stringify({'event': 'joinGame'});
         socket.send(message);
-      }, 2000);
-    }, 6000);
+      }, 3000);
+    }, 9000);
   }
 }
 
