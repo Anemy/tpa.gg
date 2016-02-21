@@ -15,7 +15,7 @@ var Bullet = function(xPos, yPos, xDir, yDir, angle, ownerID) {
 
   this.angle = angle;
 
-  this.radius = 2;
+  this.radius = 3;
 
   this.damage = bulletDamage; // 10 to start (10 shot kill in constants/index.js)
 }

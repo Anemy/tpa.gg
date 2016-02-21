@@ -55,7 +55,7 @@ var serverEventHandlers = {
     $('.waitAnimation').fadeOut(500);
     setTimeout(function(){document.title = 'GAME STARTING!!!!';},2000);
     setTimeout(function(){document.title = 'GO GO GO!!!!';},4000);
-    setTimeout(function(){document.title = 'tpa';},6000);
+    setTimeout(function(){document.title = 'tpa.gg';},6000);
 
     clearInterval(game.gameLoopInterval);
     game = new Game(false);
@@ -127,7 +127,7 @@ var serverEventHandlers = {
       $('.statusText').fadeIn(500);
       $('.waitAnimation').fadeIn(500);
 
-      document.title = 'tpa';
+      document.title = 'tpa.gg';
 
       // give it that little wait before searching for the game
       setTimeout( function() {
