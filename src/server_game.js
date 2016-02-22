@@ -258,9 +258,18 @@ var removeClientFromLobby = function(client) {
           delete lobbies[client.lobbyId];
         }
         else {
+          var lobby = lobbies[client.lobbyId];
           // console.log('Lobby b4: ' + Object.keys(lobbies[client.lobbyId].clients));
-          delete lobbies[client.lobbyId].clients[client.token];
+          delete lobby.clients[client.token];
           // console.log('Lobby after: ' + Object.keys(lobbies[client.lobbyId].clients));
+
+          var message = JSON.stringify({'event': 'lobbyFound', 'body': lobby.population});
+
+          for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
+            var clientId = Object.keys(lobby.clients)[i];
+            var clientToSendTo = lobby.clients[clientId];
+            clientToSendTo.send(message);
+          }
         }
       }
 

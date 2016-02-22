@@ -31,14 +31,29 @@ $(document).ready(function() {
   $('.wins').text('Wins: ' + localStorage.getItem("tpa_victory"));
   $('.losses').text('Losses: ' + localStorage.getItem("tpa_defeat"));
 
-  // find a game
+  // find a game clicked
   $('.joinGame').on('click', function() {
     if(Date.now() - joinGameLastClick > 1000) { // just a base rate limiter
-
       joinGameLastClick = Date.now();
 
       findAGame();
     }
+  });
+
+  // someone hit enter in name input - join a game
+  $('.nameInput').keypress(function(event) {
+    if (event.which == 13) { // enter key
+      if(Date.now() - joinGameLastClick > 1000) { // just a base rate limiter
+        joinGameLastClick = Date.now();
+
+        findAGame();
+      }
+    }
+  });
+
+  // click back when searching
+  $('.backButton').click(function() {
+
   });
 
   // creates a game to run in the background of the webpage while the user is on the menu

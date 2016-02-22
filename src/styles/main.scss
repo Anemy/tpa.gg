@@ -160,6 +160,27 @@ body {
 
   box-shadow: 0 0 70px rgba(90,80,155,0.6);
 
+
+  .backButton {
+    display:none;
+
+    position: absolute;
+
+    top: 4px;
+    left: 8px;
+
+    color: #F2F2F2;
+
+    font-size: 26px;
+
+    opacity: 0.7;
+  }
+  .backButton:hover {
+    opacity: 1;
+
+    cursor: pointer;
+  }
+
   .statusText {
     display:none;
 
@@ -200,7 +221,8 @@ body {
     width: 7em;
 
     margin: auto;
-    margin-top: 134px;
+    // margin-top: 134px;
+    margin-top: 16px;
 
     transition: all 0.4s;
 
@@ -279,4 +301,25 @@ body {
       height: 100%;
     }
   }
+}
+
+.mediaIcon {
+  width: 54px;
+  height: 54px;
+
+  opacity: 0.75;
+
+  // position: absolute;
+  // top: 26px;
+  // right: 8px;
+
+  margin: auto;
+  margin-top: 62px;
+
+  transition: all 0.4s;
+}
+.mediaIcon:hover {
+  opacity: 1;
+
+  cursor: pointer;
 }

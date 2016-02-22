@@ -184,6 +184,7 @@ var findAGame = function() {
 
   $('.joinGame').fadeOut(500);
   $('.nameInput').fadeOut(500);
+  $('.mediaIcon').fadeOut(500);
   if(showingAfkMessage) {
     $('.afkMessageDisplay').fadeOut(500);
     showingAfkMessage = false;
@@ -192,6 +193,7 @@ var findAGame = function() {
   setTimeout(function() {
     $('.statusText').fadeIn(500);
     $('.waitAnimation').fadeIn(500);
+    $('.backButton').fadeIn(500);
   }, 1000);
 
   // give it that little wait before searching for the game
@@ -209,9 +211,11 @@ var showMainMenu = function() {
 
   $('.joinGame').css('display', 'block');
   $('.nameInput').css('display', 'block');
+  $('.mediaIcon').css('display', 'block');
 
   $('.statusText').css('display', 'none');
   $('.waitAnimation').css('display', 'none');
+  $('.backButton').css('display', 'none');
 
   // Game has ended, set up the background game
   if(inGame) {
