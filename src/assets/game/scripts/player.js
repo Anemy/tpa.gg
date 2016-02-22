@@ -4,7 +4,7 @@ This contains everything pertaining to the players
 
 */
 
-var Player = function (x, y, username) {
+var Player = function (x, y, username, arrayIndex) {
   this.username = username || "";
 
   this.x = x;
@@ -28,6 +28,8 @@ var Player = function (x, y, username) {
   this.rotation = 0; // used in asteroid version
 
   this.health = playerHealth;
+
+  this.arrayIndex = arrayIndex;
 
   // player movement
   this.left = false;

@@ -11,7 +11,7 @@ var ctx;
 var astroidMode = false;
 
 // param: server - true/false - true means it's the server
-var Game = function(server, lobby, serverSendGameData, lobbyEndGame, astroidMode) {
+var Game = function(server, lobby, serverSendGameData, lobbyEndGame, serverKickPlayer) {
   this.server = server;
 
   // methods used by server
@@ -20,6 +20,7 @@ var Game = function(server, lobby, serverSendGameData, lobbyEndGame, astroidMode
 
     this.serverSendGameData = serverSendGameData;
     this.lobbyEndGame = lobbyEndGame;
+    this.serverKickPlayer = serverKickPlayer;
   }
 
   // if(astroidMode) {
@@ -214,6 +215,10 @@ Game.prototype.checkCollisions = function(delta) {
               clearInterval(this.gameLoopInterval);
               // end the game
               this.lobbyEndGame(this.lobby);
+            }
+            else {
+              // otherwise lets get that person outta here!
+              this.serverKickPlayer(this.lobby, i);
             }
           }
         }

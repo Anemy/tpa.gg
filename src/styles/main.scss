@@ -120,6 +120,19 @@ body {
   cursor: pointer;
 }
 
+.afkMessageDisplay {
+  display:none;
+
+  margin: auto;
+
+  color: #F2F2F2;
+
+  text-decoration: none;
+  text-shadow: none;
+
+  font-size: 18px;
+}
+
 .gameSearcher {
 
   font-family: 'Oswald', sans-serif;
@@ -146,19 +159,6 @@ body {
   background-repeat: no-repeat;
 
   box-shadow: 0 0 70px rgba(90,80,155,0.6);
-
-  .afkMessageDisplay {
-    display:none;
-
-    margin: auto;
-
-    color: #F2F2F2;
-
-    text-decoration: none;
-    text-shadow: none;
-
-    font-size: 18px;
-  }
 
   .statusText {
     display:none;

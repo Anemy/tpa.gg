@@ -20,27 +20,16 @@ includeInThisContext(__dirname+"/assets/game/scripts/player.js");
 includeInThisContext(__dirname+"/assets/game/scripts/bullet.js");
 includeInThisContext(__dirname+"/assets/game/scripts/constants/index.js");
 
-/*
-var lastPos = 0;
-var blarg = setInterval(
-function() {
-  if(Math.abs(game.players[localPlayerID].x - lastPos) > 10) {
-    console.log('Difference: ' + game.players[localPlayerID].x + " vs " + lastPos);
-  }
-  lastPos = game.players[localPlayerID].x;
-},10);
-
-*/
-
 var usersOnline = 0;
 
 var clientEventHandlers = {
   input: function(body, client){
     // console.log('inputs recieved');
+    client.lastMessage = Date.now(); // keep them from getting kicked for afk
+
     if (client.inLobby && client.lobbyId && lobbies[client.lobbyId] && lobbies[client.lobbyId].inProgress && lobbies[client.lobbyId].clients[client.token]){ // check if it's a valid user
       // handle client input here
       // console.log("meow: " + body);
-      client.lastMessage = Date.now(); // keep them from getting kicked for afk
 
       if(body.keyType == 'u' || body.keyType == 'd') {
         if(isNaN(body.keyCode)) { // that's not a number!
@@ -117,7 +106,7 @@ var Lobby = function(lobbyId) {
   // boolean says if game is going or not - don't let people join when it's going
   this.inProgress = false;
 
-  this.game = new Game(true, this, serverSendGameData, lobbyEndGame);
+  this.game = new Game(true, this, serverSendGameData, lobbyEndGame, serverKickPlayerIntoQueue);
 }
 
 var launchGame = function(lobby) {
@@ -137,16 +126,16 @@ var launchGame = function(lobby) {
 
     // add the new players (yes this makes no sense)
     if(i == 0) {
-      lobby.game.players.push(new Player(width/6, width/6, client.username)); // top left
+      lobby.game.players.push(new Player(width/6, width/6, client.username, i)); // top left
     }
     if(i == 1) {
-      lobby.game.players.push(new Player(gameWidth - width/6, gameHeight - width/6, client.username)); // bottom right
+      lobby.game.players.push(new Player(gameWidth - width/6, gameHeight - width/6, client.username, i)); // bottom right
     }
     if(i == 2) {
-      lobby.game.players.push(new Player(width/6, gameHeight - width/6, client.username)); // bottom left
+      lobby.game.players.push(new Player(width/6, gameHeight - width/6, client.username, i)); // bottom left
     }
     if(i == 3) {
-      lobby.game.players.push(new Player(gameWidth - width/6, width/6, client.username)); // top right
+      lobby.game.players.push(new Player(gameWidth - width/6, width/6, client.username, i)); // top right
     }
   }
   // start the game running
@@ -215,6 +204,24 @@ var createNewLobby = function (client) {
   lobbies[lobbyId].clients[client.token] = client;
 }
 
+// removes a client from a lobby then tells them to go find a new game
+// used when a player loses and then should go find another game
+var serverKickPlayerIntoQueue = function (lobby, playerNumberToRemove) {
+  // tell the client about losing and that they neeed to find a new one
+  for(var i = 0; i < Object.keys(lobby.clients).length; i++) { 
+    var clientId = Object.keys(lobby.clients)[i];
+    var client = lobby.clients[clientId];
+
+    if(client.inGameNumber == playerNumberToRemove) {
+      var message = JSON.stringify({"event": "gameEnd", "body": "-2"});
+      client.send(message);
+      removeClientFromLobby(client);
+
+      return;
+    }
+  }
+}
+
 // removes the client from the lobby client.lobbyId
 // It will also delete the lobby if the client is the last one in it
 var removeClientFromLobby = function(client) {
@@ -265,6 +272,10 @@ var removeClientFromLobby = function(client) {
 
 // searches for a game for the client, or makes one depending
 var joinLobby = function(client) {
+
+  if(client.inLobby) {
+    return; // do nothing if client is already in a game
+  }
 
   // console.log(Object.keys(lobbies));
   // need to find how to reference lobbies

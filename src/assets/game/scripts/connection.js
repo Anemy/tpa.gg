@@ -95,7 +95,7 @@ var serverEventHandlers = {
       
       resultString = victoryStrings[Math.floor(Math.random() * defeatStrings.length)];
     }
-    else if(Number(body) >= 0) {
+    else if(Number(body) != -1) {
       localStorage.setItem("tpa_defeat", Number(localStorage.getItem("tpa_defeat")) + 1);
 
       $('.losses').text('Losses: ' + localStorage.getItem("tpa_defeat"));
@@ -145,10 +145,7 @@ var serverEventHandlers = {
     // show the afk message
     $('.afkMessageDisplay').css('display', 'block');
 
-    // give it that little wait before searching for the game
-    setTimeout( function() {
-      showMainMenu();
-    }, 4000);
+    showMainMenu();
   }
 }
 
