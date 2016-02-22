@@ -1,8 +1,6 @@
 [tpa.gg](http://tpa.gg)
 =========
 
-Just hook it up.
-
 Installation
 ------------
 

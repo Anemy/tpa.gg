@@ -20,6 +20,18 @@ includeInThisContext(__dirname+"/assets/game/scripts/player.js");
 includeInThisContext(__dirname+"/assets/game/scripts/bullet.js");
 includeInThisContext(__dirname+"/assets/game/scripts/constants/index.js");
 
+/*
+var lastPos = 0;
+var blarg = setInterval(
+function() {
+  if(Math.abs(game.players[localPlayerID].x - lastPos) > 10) {
+    console.log('Difference: ' + game.players[localPlayerID].x + " vs " + lastPos);
+  }
+  lastPos = game.players[localPlayerID].x;
+},10);
+
+*/
+
 var usersOnline = 0;
 
 var clientEventHandlers = {
@@ -28,6 +40,8 @@ var clientEventHandlers = {
     if (client.inLobby && client.lobbyId && lobbies[client.lobbyId] && lobbies[client.lobbyId].inProgress && lobbies[client.lobbyId].clients[client.token]){ // check if it's a valid user
       // handle client input here
       // console.log("meow: " + body);
+      client.lastMessage = Date.now(); // keep them from getting kicked for afk
+
       if(body.keyType == 'u' || body.keyType == 'd') {
         if(isNaN(body.keyCode)) { // that's not a number!
           return;
@@ -201,6 +215,54 @@ var createNewLobby = function (client) {
   lobbies[lobbyId].clients[client.token] = client;
 }
 
+// removes the client from the lobby client.lobbyId
+// It will also delete the lobby if the client is the last one in it
+var removeClientFromLobby = function(client) {
+  // tell the game to remove a player?
+  // console.log('Remove client from lobby: ' + JSON.stringify(client));
+  // console.log('Remove client:');
+  // for(var i = 0; i < Object.keys(client).length; i++) {
+  //   console.log('   ' + Object.keys(client)[i] + " : " + client[Object.keys(client)[i]]);
+  // }
+  if(client.inLobby) {
+    if(client.lobbyId != undefined && lobbies[client.lobbyId] != undefined) {
+      // client is in a lobby, remove them from the clients, and update the lobby if it's not in game yet
+      if(lobbies[client.lobbyId].inProgress) {
+
+        // a game is in process
+        delete lobbies[client.lobbyId].clients[client.clientId];
+        
+        // delete the empty lobby
+        lobbies[client.lobbyId].population--;
+        if(lobbies[client.lobbyId].population <= 0) {
+
+          clearInterval(lobbies[client.lobbyId].game.gameLoopInterval);
+          delete lobbies[client.lobbyId].game.lobby;
+          delete lobbies[client.lobbyId].game;
+
+          delete lobbies[client.lobbyId];
+        }
+      }
+      else {
+        lobbies[client.lobbyId].population--;
+        
+        // delete the lobby if all the homies leave
+        if(lobbies[client.lobbyId].population <= 0) {
+          delete lobbies[client.lobbyId];
+        }
+        else {
+          // console.log('Lobby b4: ' + Object.keys(lobbies[client.lobbyId].clients));
+          delete lobbies[client.lobbyId].clients[client.token];
+          // console.log('Lobby after: ' + Object.keys(lobbies[client.lobbyId].clients));
+        }
+      }
+
+      client.inLobby = false;
+      client.lobbyId = null;
+    }
+  }
+}
+
 // searches for a game for the client, or makes one depending
 var joinLobby = function(client) {
 
@@ -282,45 +344,35 @@ var server_start = function(server, port) {
 
     });
 
+    // afk kick timer
+    client.afkKicker = setInterval(function() {
+      // console.log('Test the afk kick! ' + (Date.now() - gameClient.lastMessage) + ' > ' + afkMaxTime + ' next game timer: ' + gameProcess.gameInstance.nextGameTimer);
+      if(Date.now() - client.lastMessage > afkKickTime && 
+        client.inLobby && lobbies[client.lobbyId] !== undefined &&
+        lobbies[client.lobbyId].inProgress) {
+          // client is in an active game
+          if(lobbies[client.lobbyId].game.countdownTimer <= 0) {
+            // console.log('Kick that afk boi!');
+            var message = JSON.stringify({'event': 'afk', 'body': ''});
+            client.send(message);
+
+            // kick the  client from the lobby
+            removeClientFromLobby(client);
+          }
+          else if (lobbies[client.lobbyId].game.countdownTimer >= 0) {
+            // make the first possible kick time equal to the starting time of the game (add 5 seconds)
+            client.lastMessage = Date.now() + lobbies[client.lobbyId].game.countdownTimer * 1000 + 5000;
+          }
+      }
+    }, afkKickTime);
+
     client.on('disconnect', function() {
       usersOnline--;
+      clearInterval(client.afkKicker);
 
-      // tell the game to remove a player?
-      if(client.inLobby) {
-        if(client.lobbyId && lobbies[client.lobbyId]) {
-          // client is in a lobby, remove them from the clients, and update the lobby if it's not in game yet
-          if(lobbies[client.lobbyId].inProgress) {
+      removeClientFromLobby(client);
 
-            // a game is in process
-            delete lobbies[client.lobbyId].clients[client.clientId];
-            
-            // delete the empty lobby
-            lobbies[client.lobbyId].population--;
-            if(lobbies[client.lobbyId].population <= 0) {
-
-              clearInterval(lobbies[client.lobbyId].game.gameLoopInterval);
-              delete lobbies[client.lobbyId].game.lobby;
-              delete lobbies[client.lobbyId].game;
-
-              delete lobbies[client.lobbyId];
-            }
-          }
-          else {
-            lobbies[client.lobbyId].population--;
-            
-            // delete the lobby if all the homies leave
-            if(lobbies[client.lobbyId].population <= 0) {
-              delete lobbies[client.lobbyId];
-            }
-            else {
-              delete lobbies[client.lobbyId].clients[client.clientId];
-            }
-          }
-
-          client.inLobby = false;
-          client.lobbyId = null;
-        }
-      }
+      delete client;
     });
   });
 }

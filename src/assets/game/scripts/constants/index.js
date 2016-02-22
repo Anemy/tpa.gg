@@ -22,6 +22,9 @@ const shootRate = 500;
 const friction = 60;
 const astroidModeRotationSpeed = 200;
 
+// afk
+const afkKickTime = 13000; // 13s
+
 // countdown time before a game starts
 const countdownTimerStart = 5; // in seconds
 

@@ -94,7 +94,7 @@ Game.prototype.gameLoop = function() {
   }
 
   if(this.slowTime) {
-    deltaTime = deltaTime/4;
+    deltaTime = deltaTime/5;
   }
 
   // if game hasn't started yet don't do any updates
@@ -160,8 +160,10 @@ Game.prototype.clientParseGameData = function(data) {
         this.players[i].mouseY = mouseY;
 
         // for self, give closer to local calculations because lags
-        this.players[i].x = this.lerp(100 * (ping / 120), x, data.players[i].x);
-        this.players[i].y = this.lerp(100 * (ping / 120), y, data.players[i].y);
+        if(ping < 120) {
+          this.players[i].x = this.lerp(100 * (ping / 120), x, data.players[i].x);
+          this.players[i].y = this.lerp(100 * (ping / 120), y, data.players[i].y);
+        }
       }
       else {
         this.players[i] = data.players[i];
@@ -176,8 +178,8 @@ Game.prototype.checkCollisions = function(delta) {
   for(var k = this.bullets.length-1; k >= 0; k--) {
     for(var i = 0; i < this.players.length; i++) {
       if(this.players[i].health > 0 && this.bullets[k].owner != i && // make sure you aren't shooting yourself
-          Math.abs(this.bullets[k].x - this.players[i].x) < this.players[i].radius + this.bullets[k].radius &&// x proximity
-          Math.abs(this.bullets[k].y - this.players[i].y) < this.players[i].radius + this.bullets[k].radius) {
+          Math.abs(this.bullets[k].x - this.players[i].x) < this.players[i].radius + this.bullets[k].radius - 3 &&// x proximity
+          Math.abs(this.bullets[k].y - this.players[i].y) < this.players[i].radius + this.bullets[k].radius - 3) { // minus 3 just to make it a little harder
         // hurt the playa
         this.players[i].health -= this.bullets[k].damage;
 
