@@ -143,7 +143,7 @@ var serverEventHandlers = {
 
     showingAfkMessage = true;
     // show the afk message
-    $('.afkMessage').css('display', 'block');
+    $('.afkMessageDisplay').css('display', 'block');
 
     // give it that little wait before searching for the game
     setTimeout( function() {
@@ -188,7 +188,7 @@ var findAGame = function() {
   $('.joinGame').fadeOut(500);
   $('.nameInput').fadeOut(500);
   if(showingAfkMessage) {
-    $('.afkMessage').fadeOut(500);
+    $('.afkMessageDisplay').fadeOut(500);
     showingAfkMessage = false;
   }
 

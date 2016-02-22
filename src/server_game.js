@@ -230,7 +230,7 @@ var removeClientFromLobby = function(client) {
       if(lobbies[client.lobbyId].inProgress) {
 
         // a game is in process
-        delete lobbies[client.lobbyId].clients[client.clientId];
+        delete lobbies[client.lobbyId].clients[client.token];
         
         // delete the empty lobby
         lobbies[client.lobbyId].population--;
