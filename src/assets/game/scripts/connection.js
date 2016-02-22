@@ -136,7 +136,7 @@ var serverEventHandlers = {
         var message = JSON.stringify({'event': 'joinGame'});
         socket.send(message);
       }, 3000);
-    }, 9000);
+    }, 7500);
   },
   afk: function(body) {
     $('.statusText').text("Kicked for inactivity");
