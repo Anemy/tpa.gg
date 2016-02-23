@@ -154,7 +154,6 @@ Game.prototype.clientParseGameData = function(data) {
         var mouseX = this.players[i].mouseX;
         var mouseY = this.players[i].mouseY;
 
-
         this.players[i] = data.players[i];
 
         this.players[i].mouseX = mouseX;

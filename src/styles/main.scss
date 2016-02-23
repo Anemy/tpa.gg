@@ -133,6 +133,24 @@ body {
   font-size: 18px;
 }
 
+.githubIcon {
+  width: 32px;
+  height: 32px;
+
+  opacity: 0.75;
+
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+
+  transition: all 0.4s;
+}
+.githubIcon:hover {
+  opacity: 1;
+
+  cursor: pointer;
+}
+
 .gameSearcher {
 
   font-family: 'Oswald', sans-serif;
